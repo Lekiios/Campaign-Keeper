@@ -1,4 +1,6 @@
 {
-  "name": "CampaignKeeper",
-  "packageManager": "yarn@4.5.2"
+  "name": "campaign-keeper",
+  "description": "A simple campaign manager API for RPGs",
+  "version": "1.0.0",
+  "packageManager": "yarn@4.6.0"
 }
