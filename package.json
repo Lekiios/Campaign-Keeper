@@ -2,5 +2,24 @@
   "name": "campaign-keeper",
   "description": "A simple campaign manager API for RPGs",
   "version": "1.0.0",
-  "packageManager": "yarn@4.6.0"
+  "packageManager": "yarn@4.6.0",
+  "scripts": {
+    "build" : "rimraf dist && tsc",
+    "lint": "eslint .",
+    "check": "prettier --check .",
+    "format": "prettier --write ."
+  },
+  "devDependencies": {
+    "@types/node": "^22.13.1",
+    "@typescript-eslint/eslint-plugin": "^8.24.0",
+    "@typescript-eslint/parser": "^8.24.0",
+    "eslint": "^8.57.1",
+    "eslint-config-prettier": "^10.0.1",
+    "eslint-plugin-unused-imports": "^4.1.4",
+    "fastify-tsconfig": "^3.0.0",
+    "prettier": "^3.5.0",
+    "rimraf": "^6.0.1",
+    "tsx": "^4.19.2",
+    "typescript": "^5.7.3"
+  }
 }
