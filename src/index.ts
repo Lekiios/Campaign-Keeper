@@ -1,6 +1,7 @@
 import { configurePlugins, server } from "@providers/server";
+import "dotenv/config";
 
-const { SERVER_PORT = 3000, SERVER_HOST = "127.0.0.1" } = process.env;
+const { SERVER_PORT = 5000, SERVER_HOST = "0.0.0.0" } = process.env;
 
 const main = async () => {
     try {

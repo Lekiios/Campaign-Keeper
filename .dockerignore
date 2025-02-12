@@ -1,0 +1,10 @@
+.idea
+
+.git
+.gitignore
+.gitattributes
+
+.yarn
+node_modules
+
+.DS_Store

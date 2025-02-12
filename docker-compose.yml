@@ -1,0 +1,34 @@
+services:
+
+  db:
+    image: postgres
+    restart: unless-stopped
+    env_file: ./.env
+    environment:
+      - POSTGRES_USER=$POSTGRES_DB_USER
+      - POSTGRES_PASSWORD=$POSTGRES_DB_ROOT_PASSWORD
+      - POSTGRES_DB=$POSTGRES_DB_DATABASE
+    ports:
+      - $POSTGRES_DB_LOCAL_PORT:$POSTGRES_DB_DOCKER_PORT
+    volumes:
+      - db:/var/lib/postgres
+
+  api:
+    depends_on:
+      - db
+    build: .
+    restart: unless-stopped
+    env_file: ./.env
+    ports:
+      - $SERVER_LOCAL_PORT:$SERVER_DOCKER_PORT
+    environment:
+      - DB_HOST=db
+      - DB_USER=$POSTGRES_DB_USER
+      - DB_PASSWORD=$POSTGRES_DB_ROOT_PASSWORD
+      - DB_NAME=$POSTGRES_DB_DATABASE
+      - DB_PORT=$POSTGRES_DB_DOCKER_PORT
+    stdin_open: true
+    tty: true
+
+volumes:
+  db:

@@ -10,6 +10,7 @@ server.get(
         schema: {
             querystring: getExampleQuerySchema,
             response: { 200: getExampleResponseSchema },
+            tags: ["Example"],
         },
     },
     async (request, reply) => {
