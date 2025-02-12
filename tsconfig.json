@@ -1,14 +1,42 @@
 {
   "extends": "fastify-tsconfig",
   "compilerOptions": {
-    "target": "es2020",
-    "outDir": "./dist",
-    "module": "CommonJS",
+    "target": "ESNext",
+    "module": "ESNext",
+    "outDir": "dist",
     "esModuleInterop": true,
     "forceConsistentCasingInFileNames": true,
-    "strict": true,
     "skipLibCheck": true,
+    "moduleResolution": "node",
+    "resolveJsonModule": true,
+    /* Imports */
+    "baseUrl": "./",
+    "paths": {
+      "@providers/*": [
+        "src/providers/*"
+      ],
+      "@routes/*": [
+        "src/routes/*"
+      ],
+      "@schemas/*": [
+        "src/schemas/*"
+      ]
+    },
+    /* Linting */
+    "strict": true,
+    "noUnusedLocals": true,
+    "noUnusedParameters": true,
   },
-  "include": ["src/**/*.ts"],
-  "exclude": [".eslintrc.json", "node_modules"]
+  "include": [
+    "src/**/*",
+    "src/*"
+  ],
+  "exclude": [
+    ".eslintrc.json",
+    "node_modules"
+  ],
+  "tsc-alias": {
+    "resolveFullPaths": true,
+    "verbose": false
+  }
 }

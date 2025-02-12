@@ -3,13 +3,16 @@
   "description": "A simple campaign manager API for RPGs",
   "version": "1.0.0",
   "packageManager": "yarn@4.6.0",
+  "type": "module",
   "scripts": {
-    "build" : "rimraf dist && tsc",
+    "dev": "tsx --watch src/index.ts",
+    "build": "rimraf dist && tsc",
     "lint": "eslint .",
     "check": "prettier --check .",
     "format": "prettier --write ."
   },
   "devDependencies": {
+    "@sinclair/typebox": "^0.34.16",
     "@types/node": "^22.13.1",
     "@typescript-eslint/eslint-plugin": "^8.24.0",
     "@typescript-eslint/parser": "^8.24.0",
@@ -19,7 +22,14 @@
     "fastify-tsconfig": "^3.0.0",
     "prettier": "^3.5.0",
     "rimraf": "^6.0.1",
+    "tsc-alias": "^1.8.10",
     "tsx": "^4.19.2",
     "typescript": "^5.7.3"
+  },
+  "dependencies": {
+    "@fastify/swagger": "^9.4.2",
+    "@fastify/swagger-ui": "^5.2.1",
+    "@fastify/type-provider-typebox": "^5.1.0",
+    "fastify": "^5.2.1"
   }
 }
