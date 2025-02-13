@@ -6,6 +6,9 @@
   "type": "module",
   "scripts": {
     "dev": "tsx --watch src/index.ts",
+    "generate": "prisma generate",
+    "db:migrate:dev": "prisma migrate dev",
+    "db:migrate:prod": "prisma migrate deploy",
     "build": "rimraf dist && tsc && tsc-alias",
     "lint": "eslint .",
     "check": "prettier --check .",
@@ -21,6 +24,7 @@
     "eslint-plugin-unused-imports": "^4.1.4",
     "fastify-tsconfig": "^3.0.0",
     "prettier": "^3.5.0",
+    "prisma": "^6.3.1",
     "rimraf": "^6.0.1",
     "tsc-alias": "^1.8.10",
     "tsx": "^4.19.2",
@@ -30,6 +34,7 @@
     "@fastify/swagger": "^9.4.2",
     "@fastify/swagger-ui": "^5.2.1",
     "@fastify/type-provider-typebox": "^5.1.0",
+    "@prisma/client": "^6.3.1",
     "dotenv": "^16.4.7",
     "fastify": "^5.2.1"
   }
