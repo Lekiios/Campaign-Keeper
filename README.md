@@ -49,6 +49,9 @@ Once the containers are up and running, you can access the API at :
 
 `http://<SERVER_DOCKER_HOST>:<SERVER_LOCAL_PORT>.`
 
+## API Endpoints
+    Work in progress
+
 ## Docker Configuration
 ### Dockerfile
 
@@ -64,10 +67,6 @@ The docker-compose.yml file defines two services:
 ## Dependencies
 
 Dependencies are managed using Yarn. The main dependencies are listed in the `package.json` file.
-
-## Contributing
-
-Feel free to open issues for any bugs or improvements.
 
 ## Git Workflow
 
@@ -89,3 +88,11 @@ This project follows the Git Flow branching model to manage development and rele
    git checkout develop
    git pull origin develop
    git checkout -b feature/your-feature-name
+   
+## Contributing
+
+Feel free to open issues for any bugs or improvements.
+
+### Contributors
+- [Lekiios](https://github.com/Lekiios)
+- [Vladouh](https://github.com/Vladouh)
