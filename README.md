@@ -47,7 +47,7 @@ This command will build the Docker images and start the containers for both the 
 
 Once the containers are up and running, you can access the API at :
 
-```http://<SERVER_DOCKER_HOST>:<SERVER_LOCAL_PORT>.```
+`http://<SERVER_DOCKER_HOST>:<SERVER_LOCAL_PORT>.`
 
 ## API Endpoints
     Work in progress
@@ -68,6 +68,27 @@ The docker-compose.yml file defines two services:
 
 Dependencies are managed using Yarn. The main dependencies are listed in the `package.json` file.
 
+## Git Workflow
+
+This project follows the Git Flow branching model to manage development and release processes. The main branches are:
+
+- **master :** The stable branch containing production-ready code.
+- **develop :** The branch for integrating features and preparing for the next release.
+
+### Branch Naming Conventions
+
+- **features/\* :** Branches for developing new features.
+- **fix/\* :** Branches for bug fixes or minor improvements.
+
+### Contribution Rules
+
+1. **Branching :** Create a new branch from `develop` for each feature or fix. Use descriptive names for your branches.
+
+   ```bash
+   git checkout develop
+   git pull origin develop
+   git checkout -b feature/your-feature-name
+   
 ## Contributing
 
 Feel free to open issues for any bugs or improvements.
