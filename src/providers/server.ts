@@ -14,8 +14,8 @@ export const configurePlugins = async () => {
             produces: ["application/json"],
             tags: [
                 {
-                    name: "Example",
-                    description: "Exemple routes",
+                    name: "users",
+                    description: "Users routes",
                 },
             ],
         },
