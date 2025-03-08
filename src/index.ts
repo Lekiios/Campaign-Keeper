@@ -8,7 +8,7 @@ const main = async () => {
     try {
         await configurePlugins();
 
-        await Promise.all([await import("@routes/Example")]);
+        await Promise.all([await import("@routes/user.route")]);
 
         await server.listen({
             port: Number(SERVER_PORT),
