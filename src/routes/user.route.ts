@@ -13,7 +13,7 @@ const userService = new UserService(new UserRepository());
 const userController = new UserController(userService);
 
 server.get(
-    "/users",
+    "/api/users",
     {
         schema: {
             querystring: findAllUsersQuerySchema,
@@ -28,7 +28,7 @@ server.get(
 );
 
 server.post(
-    "/users",
+    "/api/users",
     {
         schema: {
             body: createUserBodySchema,
