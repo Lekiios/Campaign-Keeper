@@ -13,10 +13,150 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+enum CampaignStatus {
+  PLANNED
+  ONGOING
+  COMPLETED
+  CANCELLED
+  PAUSED
+}
+
+enum SpellType {
+  OFFENSIVE
+  DEFENSIVE
+  UTILITY
+  SUMMONING
+  ENCHANTMENT
+  ILLUSION
+  DIVINATION
+  NECROMANCY
+}
+
+enum ItemType {
+  WEAPON
+  ARMOR
+  POTION
+  SCROLL
+  ARTIFACT
+  TOOL
+  ACCESSORY
+  CONSUMABLE
+  QUESTITEM
+}
+
+model Campaign {
+  id          Int            @id @default(autoincrement())
+  name        String
+  description String?
+  status      CampaignStatus @default(PLANNED)
+  characters  Character[]
+  Session     Session[]
+}
+
+model Session {
+  id         Int       @id @default(autoincrement())
+  campaignId Int
+  apiUrl     String?
+  campaign   Campaign? @relation(fields: [campaignId], references: [id])
+}
+
 model User {
-  id              Int     @id @default(autoincrement())
-  username        String  @unique
-  email           String  @unique
-  password        String
-  profile_picture String?
+  id             Int         @id @default(autoincrement())
+  username       String
+  email          String
+  password       String
+  profilePicture String?
+  characters     Character[]
+}
+
+model Class {
+  id          Int         @id @default(autoincrement())
+  name        String
+  description String?
+  Character   Character[]
+  Spell       Spell[]
+}
+
+model Stats {
+  id           Int         @id @default(autoincrement())
+  strength     Int
+  dexterity    Int
+  constitution Int
+  intelligence Int
+  wisdom       Int
+  charisma     Int
+  Character    Character[]
+  Item         Item[]
+}
+
+model Character {
+  id              Int              @id @default(autoincrement())
+  name            String
+  description     String?
+  level           Int?             @default(1)
+  requiredXp      Int
+  xp              Int?             @default(0)
+  maxHp           Int
+  currentHp       Int
+  money           Int?             @default(0)
+  inventorySize   Int
+  classId         Int
+  statsId         Int
+  userId          Int
+  campaignId      Int?
+  class           Class            @relation(fields: [classId], references: [id])
+  stats           Stats            @relation(fields: [statsId], references: [id])
+  user            User             @relation(fields: [userId], references: [id])
+  campaign        Campaign?        @relation(fields: [campaignId], references: [id])
+  inventoryItems  InventoryItem[]
+  equipment       Equipment[]
+  characterSpells CharacterSpell[]
+}
+
+model Item {
+  id            Int             @id @default(autoincrement())
+  name          String
+  description   String?
+  type          ItemType
+  requiredLevel Int?            @default(1)
+  statsId       Int
+  stats         Stats           @relation(fields: [statsId], references: [id])
+  InventoryItem InventoryItem[]
+  Equipment     Equipment[]
+}
+
+model Spell {
+  id             Int              @id @default(autoincrement())
+  name           String
+  description    String?
+  type           SpellType
+  requiredLevel  Int?             @default(1)
+  classId        Int?
+  class          Class?           @relation(fields: [classId], references: [id])
+  CharacterSpell CharacterSpell[]
+}
+
+model InventoryItem {
+  id          Int       @id @default(autoincrement())
+  characterId Int
+  itemId      Int
+  quantity    Int
+  character   Character @relation(fields: [characterId], references: [id])
+  item        Item      @relation(fields: [itemId], references: [id])
+}
+
+model Equipment {
+  id          Int       @id @default(autoincrement())
+  characterId Int
+  itemId      Int
+  character   Character @relation(fields: [characterId], references: [id])
+  item        Item      @relation(fields: [itemId], references: [id])
+}
+
+model CharacterSpell {
+  id          Int       @id @default(autoincrement())
+  characterId Int
+  spellId     Int
+  character   Character @relation(fields: [characterId], references: [id])
+  spell       Spell     @relation(fields: [spellId], references: [id])
 }

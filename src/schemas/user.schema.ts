@@ -4,7 +4,7 @@ export const createUserBodySchema = t.Object({
     username: t.String(),
     email: t.String(),
     password: t.String(),
-    profile_picture: t.Optional(t.String()),
+    profilePicture: t.Optional(t.String()),
 });
 
 export type createUserBody = Static<typeof createUserBodySchema>;
@@ -14,7 +14,7 @@ export const createUserResponseSchema = t.Object({
     username: t.String(),
     email: t.String(),
     password: t.String(),
-    profile_picture: t.Optional(t.String()),
+    profilePicture: t.Optional(t.String()),
 });
 
 export type createUserResponse = Static<typeof createUserResponseSchema>;
@@ -32,7 +32,7 @@ export const findAllUsersResponseSchema = t.Array(
         username: t.String(),
         email: t.String(),
         password: t.String(),
-        profile_picture: t.Optional(t.String()),
+        profilePicture: t.Optional(t.String()),
     }),
 );
 
