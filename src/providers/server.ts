@@ -17,6 +17,10 @@ export const configurePlugins = async () => {
                     name: "Users",
                     description: "Users routes",
                 },
+                {
+                    name: "Classes",
+                    description: "Classes routes",
+                },
             ],
         },
     });
