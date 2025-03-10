@@ -2,12 +2,19 @@ import { server } from "@providers/server";
 import {
     createUserBodySchema,
     createUserResponseSchema,
+    deleteUserParamsSchema,
     findAllUsersQuerySchema,
     findAllUsersResponseSchema,
+    findUserByIdParamsSchema,
+    findUserByIdResponseSchema,
+    updateUserBodySchema,
+    updateUserParamsSchema,
+    updateUserResponseSchema,
 } from "@schemas/user.schema";
-import { UserController } from "../controllers/user.controller";
-import { UserService } from "../services/user.service";
-import { UserRepository } from "../repository/user.repository";
+import { UserController } from "@controllers/user.controller";
+import { UserService } from "@services/user.service";
+import { UserRepository } from "@repositories/user.repository";
+import { ErrorResponseSchema } from "@schemas/common.schema";
 
 const userService = new UserService(new UserRepository());
 const userController = new UserController(userService);
@@ -18,12 +25,12 @@ server.get(
         schema: {
             querystring: findAllUsersQuerySchema,
             response: { 200: findAllUsersResponseSchema },
-            tags: ["users"],
+            tags: ["Users"],
         },
     },
     async (request, reply) => {
-        const users = await userController.findAllUsers(request.query);
-        reply.code(200).send(users);
+        const res = await userController.findAllUsers(request.query);
+        reply.code(res.statusCode).send(res.body);
     },
 );
 
@@ -32,12 +39,67 @@ server.post(
     {
         schema: {
             body: createUserBodySchema,
-            response: { 200: createUserResponseSchema },
-            tags: ["users"],
+            response: { 201: createUserResponseSchema },
+            tags: ["Users"],
         },
     },
     async (request, reply) => {
-        const user = await userController.createUser(request.body);
-        reply.code(200).send(user);
+        const res = await userController.createUser(request.body);
+        return reply.code(res.statusCode).send(res.body);
+    },
+);
+
+server.get(
+    "/api/users/:id",
+    {
+        schema: {
+            params: findUserByIdParamsSchema,
+            response: {
+                200: findUserByIdResponseSchema,
+                404: ErrorResponseSchema,
+            },
+            tags: ["Users"],
+        },
+    },
+    async (request, reply) => {
+        const res = await userController.findUserById(request.params);
+        return reply.code(res.statusCode).send(res.body);
+    },
+);
+
+server.delete(
+    "/api/users/:id",
+    {
+        schema: {
+            params: deleteUserParamsSchema,
+            response: { 204: {} },
+            tags: ["Users"],
+        },
+    },
+    async (request, reply) => {
+        const res = await userController.deleteUserById(request.params);
+        return reply.code(res.statusCode).send();
+    },
+);
+
+server.patch(
+    "/api/users/:id",
+    {
+        schema: {
+            params: updateUserParamsSchema,
+            body: updateUserBodySchema,
+            response: {
+                200: updateUserResponseSchema,
+                404: ErrorResponseSchema,
+            },
+            tags: ["Users"],
+        },
+    },
+    async (request, reply) => {
+        const res = await userController.updateUserById(
+            request.params,
+            request.body,
+        );
+        return reply.code(res.statusCode).send(res.body);
     },
 );
