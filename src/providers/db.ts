@@ -8,3 +8,4 @@ export const createDbClient = () => {
 
 export type UserEntity = User;
 export type UserCreateEntity = Omit<User, "id">;
+export type UserUpdateEntity = Partial<User>;
