@@ -1,9 +1,9 @@
 import { db } from "../index";
 import { ClassCreateEntity, ClassUpdateEntity } from "@providers/db";
 
-export class ClassRepository {
+export class ClassesRepository {
     /**
-     * Create a user in the database
+     * Create a class in the database
      * @param _class Object that contains the class data
      */
     create(_class: ClassCreateEntity) {

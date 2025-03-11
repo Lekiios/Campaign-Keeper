@@ -1,8 +1,8 @@
-import { ClassRepository } from "@repositories/class.repository";
+import { ClassesRepository } from "@repositories/classes.repository";
 import { ClassCreateEntity, ClassUpdateEntity } from "@providers/db";
 
 export class ClassService {
-    constructor(private classRepository: ClassRepository) {}
+    constructor(private classRepository: ClassesRepository) {}
 
     /**
      * Create a class in the database

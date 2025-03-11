@@ -1,8 +1,8 @@
-import { UserRepository } from "@repositories/user.repository";
+import { UsersRepository } from "@repositories/users.repository";
 import { UserCreateEntity, UserUpdateEntity } from "@providers/db";
 
 export class UserService {
-    constructor(private userRepository: UserRepository) {}
+    constructor(private userRepository: UsersRepository) {}
 
     /**
      * Create a user in the database

@@ -1,7 +1,7 @@
 import { server } from "@providers/server";
 
 import { ClassService } from "@services/class.service";
-import { ClassRepository } from "@repositories/class.repository";
+import { ClassesRepository } from "@repositories/classes.repository";
 import { ClassController } from "@controllers/class.controller";
 import {
     createClassBodySchema,
@@ -17,7 +17,7 @@ import {
 } from "@schemas/class.schema";
 import { ErrorResponseSchema } from "@schemas/common.schema";
 
-const classService = new ClassService(new ClassRepository());
+const classService = new ClassService(new ClassesRepository());
 const classController = new ClassController(classService);
 
 server.post(

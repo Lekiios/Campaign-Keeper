@@ -13,10 +13,10 @@ import {
 } from "@schemas/user.schema";
 import { UserController } from "@controllers/user.controller";
 import { UserService } from "@services/user.service";
-import { UserRepository } from "@repositories/user.repository";
+import { UsersRepository } from "@repositories/users.repository";
 import { ErrorResponseSchema } from "@schemas/common.schema";
 
-const userService = new UserService(new UserRepository());
+const userService = new UserService(new UsersRepository());
 const userController = new UserController(userService);
 
 server.get(
