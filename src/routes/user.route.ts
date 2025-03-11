@@ -12,11 +12,11 @@ import {
     updateUserResponseSchema,
 } from "@schemas/user.schema";
 import { UserController } from "@controllers/user.controller";
-import { UserService } from "@services/user.service";
+import { UsersService } from "@services/users.service";
 import { UsersRepository } from "@repositories/users.repository";
 import { ErrorResponseSchema } from "@schemas/common.schema";
 
-const userService = new UserService(new UsersRepository());
+const userService = new UsersService(new UsersRepository());
 const userController = new UserController(userService);
 
 server.get(

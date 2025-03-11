@@ -1,7 +1,7 @@
 import { UsersRepository } from "@repositories/users.repository";
 import { UserCreateEntity, UserUpdateEntity } from "@providers/db";
 
-export class UserService {
+export class UsersService {
     constructor(private userRepository: UsersRepository) {}
 
     /**

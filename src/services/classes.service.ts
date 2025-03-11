@@ -1,7 +1,7 @@
 import { ClassesRepository } from "@repositories/classes.repository";
 import { ClassCreateEntity, ClassUpdateEntity } from "@providers/db";
 
-export class ClassService {
+export class ClassesService {
     constructor(private classRepository: ClassesRepository) {}
 
     /**

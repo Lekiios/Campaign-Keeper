@@ -1,4 +1,4 @@
-import { UserService } from "@services/user.service";
+import { UsersService } from "@services/users.service";
 import {
     CreateUserBody,
     CreateUserResponse,
@@ -15,7 +15,7 @@ import { ControllerResponse } from "@controllers/controllers";
 import { ErrorResponse } from "@schemas/common.schema";
 
 export class UserController {
-    constructor(private readonly userService: UserService) {}
+    constructor(private readonly userService: UsersService) {}
 
     async createUser(
         body: CreateUserBody,
