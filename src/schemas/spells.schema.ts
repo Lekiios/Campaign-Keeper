@@ -1,12 +1,15 @@
 import { Static, Type as t } from "@sinclair/typebox";
 import { SpellType } from "@prisma/client";
 import { classesSchema } from "@schemas/classes.schema";
+import { StringEnum } from "@schemas/common.schema";
+
+const SpellTypeEnum = StringEnum(Object.values(SpellType));
 
 export const spellsSchema = t.Object({
     id: t.Number(),
     name: t.String(),
     description: t.Optional(t.String()),
-    type: t.Enum(SpellType),
+    type: SpellTypeEnum,
     requiredLevel: t.Optional(t.Number()),
     class: t.Optional(classesSchema),
 });
@@ -16,7 +19,7 @@ export type Spells = Static<typeof spellsSchema>;
 export const createSpellBodySchema = t.Object({
     name: t.String(),
     description: t.Optional(t.String()),
-    type: t.Enum(SpellType),
+    type: SpellTypeEnum,
     requiredLevel: t.Optional(t.Number()),
     classId: t.Optional(t.Number()),
 });
@@ -31,7 +34,7 @@ export const findAllSpellsQuerySchema = t.Object({
     page: t.Optional(t.Number()),
     count: t.Optional(t.Number()),
     classId: t.Optional(t.Number()),
-    type: t.Optional(t.Enum(SpellType)),
+    type: t.Optional(SpellTypeEnum),
 });
 
 export type FindAllSpellsQuery = Static<typeof findAllSpellsQuerySchema>;
@@ -54,7 +57,7 @@ export type DeleteSpellParams = FindSpellByIdParams;
 export const updateSpellBodySchema = t.Object({
     name: t.Optional(t.String()),
     description: t.Optional(t.String()),
-    type: t.Optional(t.Enum(SpellType)),
+    type: t.Optional(SpellTypeEnum),
     requiredLevel: t.Optional(t.Number()),
     classId: t.Optional(t.Number()),
 });
