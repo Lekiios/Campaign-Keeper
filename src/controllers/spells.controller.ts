@@ -6,7 +6,6 @@ import {
     CreateSpellBody,
     CreateSpellResponse,
     DeleteSpellParams,
-    FindAllSpellsBody,
     FindAllSpellsQuery,
     FindAllSpellsResponse,
     FindSpellByIdParams,
@@ -71,24 +70,23 @@ export class SpellsController {
 
     async findAllSpells(
         query: FindAllSpellsQuery,
-        body: FindAllSpellsBody,
     ): Promise<ControllerResponse<FindAllSpellsResponse | ErrorResponse>> {
         const { page, count } = query;
 
         let _class: ClassEntity | null = null;
-        if (body.classId) {
-            _class = await this.classService.findById(body.classId);
+        if (query.classId) {
+            _class = await this.classService.findById(query.classId);
             if (!_class) {
                 return {
                     statusCode: 404,
                     body: {
-                        message: `Class with id ${body.classId} not found`,
+                        message: `Class with id ${query.classId} not found`,
                     },
                 };
             }
         }
 
-        const filter = { classId: body?.classId, type: body?.type };
+        const filter = { classId: query?.classId, type: query?.type };
         const spells = await this.spellService.findAll(page, count, filter);
 
         const res = spells.map(

@@ -27,16 +27,11 @@ export const createSpellResponseSchema = spellsSchema;
 
 export type CreateSpellResponse = Static<typeof createSpellResponseSchema>;
 
-export const findAllSpellsBodySchema = t.Object({
-    classId: t.Optional(t.Number()),
-    type: t.Optional(t.Enum(SpellType)),
-});
-
-export type FindAllSpellsBody = Static<typeof findAllSpellsBodySchema>;
-
 export const findAllSpellsQuerySchema = t.Object({
     page: t.Optional(t.Number()),
     count: t.Optional(t.Number()),
+    classId: t.Optional(t.Number()),
+    type: t.Optional(t.Enum(SpellType)),
 });
 
 export type FindAllSpellsQuery = Static<typeof findAllSpellsQuerySchema>;

@@ -20,21 +20,6 @@ import { ErrorResponseSchema } from "@schemas/common.schema";
 const classService = new ClassesService(new ClassesRepository());
 const classController = new ClassesController(classService);
 
-server.post(
-    "/api/classes",
-    {
-        schema: {
-            body: createClassBodySchema,
-            response: { 201: createClassResponseSchema },
-            tags: ["Classes"],
-        },
-    },
-    async (request, reply) => {
-        const res = await classController.createClass(request.body);
-        return reply.code(res.statusCode).send(res.body);
-    },
-);
-
 server.get(
     "/api/classes",
     {
@@ -46,6 +31,21 @@ server.get(
     },
     async (request, reply) => {
         const res = await classController.findAllClasses(request.query);
+        return reply.code(res.statusCode).send(res.body);
+    },
+);
+
+server.post(
+    "/api/classes",
+    {
+        schema: {
+            body: createClassBodySchema,
+            response: { 201: createClassResponseSchema },
+            tags: ["Classes"],
+        },
+    },
+    async (request, reply) => {
+        const res = await classController.createClass(request.body);
         return reply.code(res.statusCode).send(res.body);
     },
 );
