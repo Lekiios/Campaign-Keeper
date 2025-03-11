@@ -29,7 +29,7 @@ export class SpellsController {
         const { name, description, type, requiredLevel, classId } = body;
 
         let _class: ClassEntity | null = null;
-        if (classId) {
+        if (classId !== undefined) {
             _class = await this.classService.findById(classId);
             if (!_class) {
                 return {
@@ -202,7 +202,7 @@ export class SpellsController {
         const { name, description, classId, requiredLevel, type } = body;
 
         let _class: ClassEntity | null = null;
-        if (classId) {
+        if (classId !== undefined) {
             _class = await this.classService.findById(classId);
             if (!_class) {
                 return {

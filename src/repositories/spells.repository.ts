@@ -8,7 +8,11 @@ export class SpellsRepository {
      * @param spell Object that contains the spell data
      */
     create(spell: SpellCreateEntity) {
-        return db.spell.create({ data: spell });
+        // Set requiredLevel to undefined if it is not provided to handle default value
+        const { requiredLevel } = spell;
+        return db.spell.create({
+            data: { ...spell, requiredLevel: requiredLevel ?? undefined },
+        });
     }
 
     /**
