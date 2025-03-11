@@ -4,7 +4,7 @@ import { db } from "../index";
 export class UserRepository {
     /**
      * Create a user in the database
-     * @param player
+     * @param player Object that contains the player data
      */
     create(player: UserCreateEntity) {
         return db.user.create({ data: player });
