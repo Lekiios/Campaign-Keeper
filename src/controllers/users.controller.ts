@@ -10,11 +10,11 @@ import {
     UpdateUserBody,
     UpdateUserParams,
     UpdateUserResponse,
-} from "@schemas/user.schema";
+} from "@schemas/users.schema";
 import { ControllerResponse } from "@controllers/controllers";
 import { ErrorResponse } from "@schemas/common.schema";
 
-export class UserController {
+export class UsersController {
     constructor(private readonly userService: UsersService) {}
 
     async createUser(

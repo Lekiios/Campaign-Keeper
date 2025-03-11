@@ -1,5 +1,6 @@
 import { SpellCreateEntity, SpellUpdateEntity } from "@providers/db";
 import { SpellsRepository } from "@repositories/spells.repository";
+import { SpellType } from "@prisma/client";
 
 export class SpellsService {
     constructor(private spellsRepository: SpellsRepository) {}
@@ -16,9 +17,14 @@ export class SpellsService {
      * Read multiple spells from the database
      * @param page page to start reading from
      * @param count number of spells to read
+     * @param filter object that contains the filter data: classId or type
      */
-    async findAll(page?: number, count?: number) {
-        return this.spellsRepository.findAll(page, count);
+    async findAll(
+        page?: number,
+        count?: number,
+        filter?: { classId?: number; type?: SpellType },
+    ) {
+        return this.spellsRepository.findAll(page, count, filter);
     }
 
     /**

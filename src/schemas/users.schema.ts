@@ -1,6 +1,6 @@
 import { Static, Type as t } from "@sinclair/typebox";
 
-export const userSchema = t.Object({
+export const usersSchema = t.Object({
     id: t.Number(),
     username: t.String(),
     email: t.String({ format: "email" }),
@@ -17,7 +17,7 @@ export const createUserBodySchema = t.Object({
 
 export type CreateUserBody = Static<typeof createUserBodySchema>;
 
-export const createUserResponseSchema = userSchema;
+export const createUserResponseSchema = usersSchema;
 
 export type CreateUserResponse = Static<typeof createUserResponseSchema>;
 
@@ -28,7 +28,7 @@ export const findAllUsersQuerySchema = t.Object({
 
 export type FindAllUsersQuery = Static<typeof findAllUsersQuerySchema>;
 
-export const findAllUsersResponseSchema = t.Array(userSchema);
+export const findAllUsersResponseSchema = t.Array(usersSchema);
 
 export type FindAllUsersResponse = Static<typeof findAllUsersResponseSchema>;
 
@@ -38,7 +38,7 @@ export const findUserByIdParamsSchema = t.Object({
 
 export type FindUserByIdParams = Static<typeof findUserByIdParamsSchema>;
 
-export const findUserByIdResponseSchema = userSchema;
+export const findUserByIdResponseSchema = usersSchema;
 
 export type FindUserByIdResponse = Static<typeof findUserByIdResponseSchema>;
 

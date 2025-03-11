@@ -2,7 +2,7 @@ import { server } from "@providers/server";
 
 import { ClassesService } from "@services/classes.service";
 import { ClassesRepository } from "@repositories/classes.repository";
-import { ClassController } from "@controllers/class.controller";
+import { ClassesController } from "@controllers/classes.controller";
 import {
     createClassBodySchema,
     createClassResponseSchema,
@@ -14,11 +14,11 @@ import {
     updateClassBodySchema,
     updateClassParamsSchema,
     updateClassResponseSchema,
-} from "@schemas/class.schema";
+} from "@schemas/classes.schema";
 import { ErrorResponseSchema } from "@schemas/common.schema";
 
 const classService = new ClassesService(new ClassesRepository());
-const classController = new ClassController(classService);
+const classController = new ClassesController(classService);
 
 server.post(
     "/api/classes",

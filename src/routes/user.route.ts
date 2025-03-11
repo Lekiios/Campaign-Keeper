@@ -10,14 +10,14 @@ import {
     updateUserBodySchema,
     updateUserParamsSchema,
     updateUserResponseSchema,
-} from "@schemas/user.schema";
-import { UserController } from "@controllers/user.controller";
+} from "@schemas/users.schema";
+import { UsersController } from "@controllers/users.controller";
 import { UsersService } from "@services/users.service";
 import { UsersRepository } from "@repositories/users.repository";
 import { ErrorResponseSchema } from "@schemas/common.schema";
 
 const userService = new UsersService(new UsersRepository());
-const userController = new UserController(userService);
+const userController = new UsersController(userService);
 
 server.get(
     "/api/users",

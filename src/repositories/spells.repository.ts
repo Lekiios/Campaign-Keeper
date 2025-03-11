@@ -1,5 +1,6 @@
 import { db } from "../index";
 import { SpellCreateEntity, SpellUpdateEntity } from "@providers/db";
+import { SpellType } from "@prisma/client";
 
 export class SpellsRepository {
     /**
@@ -14,11 +15,20 @@ export class SpellsRepository {
      * Read multiple spells from the database
      * @param [page=0] page to start reading from
      * @param [count=10] number of spells to read
+     * @param filter object that contains the filter data: classId or type
      */
-    findAll(page: number = 0, count: number = 10) {
+    findAll(
+        page: number = 0,
+        count: number = 10,
+        filter?: { classId?: number; type?: SpellType },
+    ) {
         return db.spell.findMany({
             skip: page * count,
             take: count,
+            where: {
+                classId: filter?.classId,
+                type: filter?.type,
+            },
         });
     }
 

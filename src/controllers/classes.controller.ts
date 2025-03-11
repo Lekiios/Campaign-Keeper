@@ -12,9 +12,9 @@ import {
     UpdateClassBody,
     UpdateClassParams,
     UpdateClassResponse,
-} from "@schemas/class.schema";
+} from "@schemas/classes.schema";
 
-export class ClassController {
+export class ClassesController {
     constructor(private readonly classService: ClassesService) {}
 
     async createClass(

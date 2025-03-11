@@ -1,6 +1,6 @@
 import { Static, Type as t } from "@sinclair/typebox";
 
-export const classSchema = t.Object({
+export const classesSchema = t.Object({
     id: t.Number(),
     name: t.String(),
     description: t.Optional(t.String()),
@@ -13,7 +13,7 @@ export const createClassBodySchema = t.Object({
 
 export type CreateClassBody = Static<typeof createClassBodySchema>;
 
-export const createClassResponseSchema = classSchema;
+export const createClassResponseSchema = classesSchema;
 
 export type CreateClassResponse = Static<typeof createClassResponseSchema>;
 
@@ -24,7 +24,7 @@ export const findAllClassesQuerySchema = t.Object({
 
 export type FindAllClassesQuery = Static<typeof findAllClassesQuerySchema>;
 
-export const findAllClassesResponseSchema = t.Array(classSchema);
+export const findAllClassesResponseSchema = t.Array(classesSchema);
 
 export type FindAllClassesResponse = Static<
     typeof findAllClassesResponseSchema
@@ -36,7 +36,7 @@ export const findClassByIdParamsSchema = t.Object({
 
 export type FindClassByIdParams = Static<typeof findClassByIdParamsSchema>;
 
-export const findClassByIdResponse = classSchema;
+export const findClassByIdResponse = classesSchema;
 
 export type FindClassByIdResponse = Static<typeof findClassByIdResponse>;
 
@@ -54,5 +54,5 @@ export const updateClassBodySchema = t.Object({
 
 export type UpdateClassBody = Static<typeof updateClassBodySchema>;
 
-export const updateClassResponseSchema = classSchema;
+export const updateClassResponseSchema = classesSchema;
 export type UpdateClassResponse = Static<typeof updateClassResponseSchema>;
