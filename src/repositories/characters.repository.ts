@@ -48,7 +48,7 @@ export class CharactersRepository {
      * @param character Object that contains the character data
      */
     update(id: number, character: CharacterUpdateEntity) {
-        return db.user.update({
+        return db.character.update({
             where: { id },
             data: character,
         });
