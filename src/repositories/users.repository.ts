@@ -1,7 +1,7 @@
 import { UserCreateEntity, UserUpdateEntity } from "@providers/db";
 import { db } from "../index";
 
-export class UserRepository {
+export class UsersRepository {
     /**
      * Create a user in the database
      * @param player Object that contains the player data

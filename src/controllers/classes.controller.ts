@@ -1,4 +1,4 @@
-import { ClassService } from "@services/class.service";
+import { ClassesService } from "@services/classes.service";
 import { ControllerResponse } from "@controllers/controllers";
 import { ErrorResponse } from "@schemas/common.schema";
 import {
@@ -12,10 +12,10 @@ import {
     UpdateClassBody,
     UpdateClassParams,
     UpdateClassResponse,
-} from "@schemas/class.schema";
+} from "@schemas/classes.schema";
 
-export class ClassController {
-    constructor(private readonly classService: ClassService) {}
+export class ClassesController {
+    constructor(private readonly classService: ClassesService) {}
 
     async createClass(
         body: CreateClassBody,

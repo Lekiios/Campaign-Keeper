@@ -1,8 +1,8 @@
 import { server } from "@providers/server";
 
-import { ClassService } from "@services/class.service";
-import { ClassRepository } from "@repositories/class.repository";
-import { ClassController } from "@controllers/class.controller";
+import { ClassesService } from "@services/classes.service";
+import { ClassesRepository } from "@repositories/classes.repository";
+import { ClassesController } from "@controllers/classes.controller";
 import {
     createClassBodySchema,
     createClassResponseSchema,
@@ -14,26 +14,11 @@ import {
     updateClassBodySchema,
     updateClassParamsSchema,
     updateClassResponseSchema,
-} from "@schemas/class.schema";
+} from "@schemas/classes.schema";
 import { ErrorResponseSchema } from "@schemas/common.schema";
 
-const classService = new ClassService(new ClassRepository());
-const classController = new ClassController(classService);
-
-server.post(
-    "/api/classes",
-    {
-        schema: {
-            body: createClassBodySchema,
-            response: { 201: createClassResponseSchema },
-            tags: ["Classes"],
-        },
-    },
-    async (request, reply) => {
-        const res = await classController.createClass(request.body);
-        return reply.code(res.statusCode).send(res.body);
-    },
-);
+const classService = new ClassesService(new ClassesRepository());
+const classController = new ClassesController(classService);
 
 server.get(
     "/api/classes",
@@ -46,6 +31,21 @@ server.get(
     },
     async (request, reply) => {
         const res = await classController.findAllClasses(request.query);
+        return reply.code(res.statusCode).send(res.body);
+    },
+);
+
+server.post(
+    "/api/classes",
+    {
+        schema: {
+            body: createClassBodySchema,
+            response: { 201: createClassResponseSchema },
+            tags: ["Classes"],
+        },
+    },
+    async (request, reply) => {
+        const res = await classController.createClass(request.body);
         return reply.code(res.statusCode).send(res.body);
     },
 );

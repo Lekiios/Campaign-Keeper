@@ -21,6 +21,10 @@ export const configurePlugins = async () => {
                     name: "Classes",
                     description: "Classes routes",
                 },
+                {
+                    name: "Spells",
+                    description: "Spells routes",
+                },
             ],
         },
     });
