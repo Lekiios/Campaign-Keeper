@@ -30,3 +30,11 @@ export type CreateItemBody = Static<typeof createItemBodySchema>;
 
 export const createItemResponseSchema = itemSchema;
 export type CreateItemResponse = Static<typeof createItemResponseSchema>;
+
+export const findItemByIdParamsSchema = t.Object({
+    id: t.Number(),
+});
+export type FindItemByIdParams = Static<typeof findItemByIdParamsSchema>;
+
+export const findItemByIdResponseSchema = itemSchema;
+export type FindItemByIdResponse = Static<typeof findItemByIdResponseSchema>;

@@ -11,4 +11,16 @@ export class ItemsService {
     async create(item: ItemCreateEntity) {
         return this.itemsRepository.create(item);
     }
+
+    async findItemStatsById(id: number) {
+        return this.itemsRepository.findItemStatsById(id);
+    }
+
+    /**
+     * Find an item with its ID
+     * @param id
+     */
+    async findById(id: number) {
+        return this.itemsRepository.findById(id);
+    }
 }

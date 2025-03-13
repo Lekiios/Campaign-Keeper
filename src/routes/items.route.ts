@@ -6,7 +6,10 @@ import { ItemsController } from "@controllers/items.controller";
 import {
     createItemBodySchema,
     createItemResponseSchema,
+    findItemByIdParamsSchema,
+    findItemByIdResponseSchema,
 } from "@schemas/items.schema";
+import { ErrorResponseSchema } from "@schemas/common.schema";
 
 const itemsRepository = new ItemsRepository();
 const itemsService = new ItemsService(itemsRepository);
@@ -18,11 +21,29 @@ server.post(
         schema: {
             body: createItemBodySchema,
             response: { 201: createItemResponseSchema },
-            tags: ["Items"]
+            tags: ["Items"],
         },
     },
     async (request, reply) => {
         const response = await itemsController.createItem(request.body);
         return reply.status(response.statusCode).send(response.body);
-    }
+    },
+);
+
+server.get(
+    "/api/items/:id",
+    {
+        schema: {
+            params: findItemByIdParamsSchema,
+            response: {
+                200: findItemByIdResponseSchema,
+                404: ErrorResponseSchema,
+            },
+            tags: ["Items"],
+        },
+    },
+    async (request, reply) => {
+        const response = await itemsController.findItemById(request.params);
+        return reply.status(response.statusCode).send(response.body);
+    },
 );

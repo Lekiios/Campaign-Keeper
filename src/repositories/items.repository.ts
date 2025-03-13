@@ -18,4 +18,24 @@ export class ItemsRepository {
             },
         });
     }
+
+    async findItemStatsById(id: number) {
+        const item = await this.findById(id);
+
+        if (!item) {
+            return null;
+        }
+
+        return db.stats.findUnique({ where: { id: item.statsId } });
+    }
+
+    /**
+     * Find a specific item with its ID
+     * @param id
+     */
+    async findById(id: number) {
+        return db.item.findUnique({
+            where: { id },
+        });
+    }
 }
