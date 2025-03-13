@@ -19,6 +19,10 @@ export class ItemsRepository {
         });
     }
 
+    /**
+     * Find all stats of an item with its ID
+     * @param id
+     */
     async findItemStatsById(id: number) {
         const item = await this.findById(id);
 
@@ -36,6 +40,21 @@ export class ItemsRepository {
     async findById(id: number) {
         return db.item.findUnique({
             where: { id },
+        });
+    }
+
+    /**
+     * Read multiple items from the database
+     * @param [page=0] page to start reading from
+     * @param [count=10] number of items to read
+     */
+    async findAll(page: number = 0, count: number = 10) {
+        return db.item.findMany({
+            skip: page * count,
+            take: count,
+            include: {
+                stats: true,
+            },
         });
     }
 }

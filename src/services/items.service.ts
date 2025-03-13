@@ -12,6 +12,10 @@ export class ItemsService {
         return this.itemsRepository.create(item);
     }
 
+    /**
+     * Find all stats of an item with its ID
+     * @param id
+     */
     async findItemStatsById(id: number) {
         return this.itemsRepository.findItemStatsById(id);
     }
@@ -22,5 +26,14 @@ export class ItemsService {
      */
     async findById(id: number) {
         return this.itemsRepository.findById(id);
+    }
+
+    /**
+     * Read multiple items from the database
+     * @param page page to start reading from
+     * @param count number of items to read
+     */
+    async findAll(page?: number, count?: number) {
+        return this.itemsRepository.findAll(page, count);
     }
 }

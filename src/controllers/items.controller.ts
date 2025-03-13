@@ -5,6 +5,8 @@ import {
     CreateItemResponse,
     FindItemByIdParams,
     FindItemByIdResponse,
+    FindAllItemsQuery,
+    FindAllItemsResponse,
 } from "@schemas/items.schema";
 import { ItemType } from "@prisma/client";
 import { ErrorResponse } from "@schemas/common.schema";
@@ -78,6 +80,27 @@ export class ItemsController {
                     charisma: stats.charisma,
                 },
             },
+        };
+    }
+
+    async findAllItems(
+        query: FindAllItemsQuery,
+    ): Promise<ControllerResponse<FindAllItemsResponse>> {
+        const { page, count } = query;
+        const items = await this.itemsService.findAll(page, count);
+
+        return {
+            statusCode: 200,
+            body: items.map(
+                ({ id, name, description, type, requiredLevel, stats }) => ({
+                    id,
+                    name,
+                    description: description ?? undefined,
+                    type,
+                    requiredLevel: requiredLevel ?? undefined,
+                    stats,
+                }),
+            ),
         };
     }
 }

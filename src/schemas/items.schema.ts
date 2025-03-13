@@ -38,3 +38,12 @@ export type FindItemByIdParams = Static<typeof findItemByIdParamsSchema>;
 
 export const findItemByIdResponseSchema = itemSchema;
 export type FindItemByIdResponse = Static<typeof findItemByIdResponseSchema>;
+
+export const findAllItemsQuerySchema = t.Object({
+    page: t.Optional(t.Number()),
+    count: t.Optional(t.Number()),
+});
+export type FindAllItemsQuery = Static<typeof findAllItemsQuerySchema>;
+
+export const findAllItemsResponseSchema = t.Array(itemSchema);
+export type FindAllItemsResponse = Static<typeof findAllItemsResponseSchema>;

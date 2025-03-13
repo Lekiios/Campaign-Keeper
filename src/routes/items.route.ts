@@ -8,6 +8,8 @@ import {
     createItemResponseSchema,
     findItemByIdParamsSchema,
     findItemByIdResponseSchema,
+    findAllItemsQuerySchema,
+    findAllItemsResponseSchema,
 } from "@schemas/items.schema";
 import { ErrorResponseSchema } from "@schemas/common.schema";
 
@@ -44,6 +46,21 @@ server.get(
     },
     async (request, reply) => {
         const response = await itemsController.findItemById(request.params);
+        return reply.status(response.statusCode).send(response.body);
+    },
+);
+
+server.get(
+    "/api/items",
+    {
+        schema: {
+            params: findAllItemsQuerySchema,
+            response: { 200: findAllItemsResponseSchema },
+            tags: ["Items"],
+        },
+    },
+    async (request, reply) => {
+        const response = await itemsController.findAllItems(request.params);
         return reply.status(response.statusCode).send(response.body);
     },
 );
