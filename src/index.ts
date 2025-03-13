@@ -11,6 +11,7 @@ const main = async () => {
         await Promise.all([
             await import("@routes/user.route"),
             await import("@routes/class.route"),
+            await import("@routes/items.route"),
         ]);
 
         await server.listen({
