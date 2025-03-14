@@ -10,6 +10,9 @@ import {
     findItemByIdResponseSchema,
     findAllItemsQuerySchema,
     findAllItemsResponseSchema,
+    updateItemParamsSchema,
+    updateItemBodySchema,
+    updateItemResponseSchema,
 } from "@schemas/items.schema";
 import { ErrorResponseSchema } from "@schemas/common.schema";
 
@@ -54,13 +57,35 @@ server.get(
     "/api/items",
     {
         schema: {
-            params: findAllItemsQuerySchema,
+            querystring: findAllItemsQuerySchema,
             response: { 200: findAllItemsResponseSchema },
             tags: ["Items"],
         },
     },
     async (request, reply) => {
-        const response = await itemsController.findAllItems(request.params);
+        const response = await itemsController.findAllItems(request.query);
+        return reply.status(response.statusCode).send(response.body);
+    },
+);
+
+server.patch(
+    "/api/items/:id",
+    {
+        schema: {
+            params: updateItemParamsSchema,
+            body: updateItemBodySchema,
+            response: {
+                200: updateItemResponseSchema,
+                404: ErrorResponseSchema,
+            },
+            tags: ["Items"],
+        },
+    },
+    async (request, reply) => {
+        const response = await itemsController.updateItemById(
+            request.params,
+            request.body,
+        );
         return reply.status(response.statusCode).send(response.body);
     },
 );

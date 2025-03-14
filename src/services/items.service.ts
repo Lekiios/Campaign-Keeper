@@ -1,5 +1,5 @@
 import { ItemsRepository } from "@repositories/items.repository";
-import { ItemCreateEntity } from "@providers/db";
+import { ItemCreateEntity, ItemUpdateEntity } from "@providers/db";
 
 export class ItemsService {
     constructor(private itemsRepository: ItemsRepository) {}
@@ -10,14 +10,6 @@ export class ItemsService {
      */
     async create(item: ItemCreateEntity) {
         return this.itemsRepository.create(item);
-    }
-
-    /**
-     * Find all stats of an item with its ID
-     * @param id
-     */
-    async findItemStatsById(id: number) {
-        return this.itemsRepository.findItemStatsById(id);
     }
 
     /**
@@ -35,5 +27,23 @@ export class ItemsService {
      */
     async findAll(page?: number, count?: number) {
         return this.itemsRepository.findAll(page, count);
+    }
+
+    /**
+     * Find all stats of an item with its ID
+     * @param id
+     */
+    async findItemStatsById(id: number) {
+        const res = this.itemsRepository.findItemStatsById(id);
+        return res.stats();
+    }
+
+    /**
+     * Update an item in the database
+     * @param id id of the item to update
+     * @param item
+     */
+    async update(id: number, item: ItemUpdateEntity) {
+        return this.itemsRepository.update(id, item);
     }
 }

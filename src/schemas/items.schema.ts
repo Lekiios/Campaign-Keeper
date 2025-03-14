@@ -47,3 +47,18 @@ export type FindAllItemsQuery = Static<typeof findAllItemsQuerySchema>;
 
 export const findAllItemsResponseSchema = t.Array(itemSchema);
 export type FindAllItemsResponse = Static<typeof findAllItemsResponseSchema>;
+
+export const updateItemParamsSchema = findItemByIdParamsSchema;
+export type UpdateItemParams = FindItemByIdParams;
+
+export const updateItemBodySchema = t.Object({
+    name: t.Optional(t.String()),
+    description: t.Optional(t.String()),
+    type: t.Optional(t.Enum(ItemType)),
+    requiredLevel: t.Optional(t.Number()),
+    stats: t.Optional(Stats),
+});
+export type UpdateItemBody = Static<typeof updateItemBodySchema>;
+
+export const updateItemResponseSchema = itemSchema;
+export type UpdateItemResponse = Static<typeof updateItemResponseSchema>;

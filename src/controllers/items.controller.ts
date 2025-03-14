@@ -7,6 +7,9 @@ import {
     FindItemByIdResponse,
     FindAllItemsQuery,
     FindAllItemsResponse,
+    UpdateItemBody,
+    UpdateItemParams,
+    UpdateItemResponse,
 } from "@schemas/items.schema";
 import { ItemType } from "@prisma/client";
 import { ErrorResponse } from "@schemas/common.schema";
@@ -101,6 +104,49 @@ export class ItemsController {
                     stats,
                 }),
             ),
+        };
+    }
+
+    async updateItemById(
+        params: UpdateItemParams,
+        body: UpdateItemBody,
+    ): Promise<ControllerResponse<UpdateItemResponse | ErrorResponse>> {
+        const { id } = params;
+        const { name, description, type, requiredLevel, stats } = body;
+
+        const updatedItem = await this.itemsService.update(id, {
+            name,
+            description,
+            type,
+            requiredLevel,
+            stats,
+        });
+
+        if (!updatedItem) {
+            return {
+                statusCode: 404,
+                body: { message: `Item with id ${id} not found` },
+            };
+        }
+
+        const itemStats = await this.itemsService.findItemStatsById(id);
+
+        if (!itemStats) {
+            throw new Error(
+                "Internal Error - Something went wrong in items' stats entities :(",
+            );
+        }
+
+        return {
+            statusCode: 200,
+            body: {
+                id: updatedItem.id,
+                name: updatedItem.name,
+                description: updatedItem.description ?? undefined,
+                type: updatedItem.type,
+                requiredLevel: updatedItem.requiredLevel ?? undefined,
+                stats: itemStats,
+            },
         };
     }
 }

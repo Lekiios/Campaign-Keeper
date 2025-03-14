@@ -1,5 +1,5 @@
 import { db } from "../index";
-import { ItemCreateEntity } from "@providers/db";
+import { ItemCreateEntity, ItemUpdateEntity } from "@providers/db";
 
 export class ItemsRepository {
     /**
@@ -23,14 +23,8 @@ export class ItemsRepository {
      * Find all stats of an item with its ID
      * @param id
      */
-    async findItemStatsById(id: number) {
-        const item = await this.findById(id);
-
-        if (!item) {
-            return null;
-        }
-
-        return db.stats.findUnique({ where: { id: item.statsId } });
+    findItemStatsById(id: number) {
+        return db.item.findUnique({ where: { id }, select: { stats: true } });
     }
 
     /**
@@ -54,6 +48,36 @@ export class ItemsRepository {
             take: count,
             include: {
                 stats: true,
+            },
+        });
+    }
+
+    /**
+     * Update an item in the database
+     * @param id id of the item to update
+     * @param item
+     */
+    async update(id: number, item: ItemUpdateEntity) {
+        if (item.stats) {
+            const previousItem = await this.findById(id);
+
+            if (!previousItem) {
+                return null;
+            }
+
+            await db.stats.update({
+                where: { id: previousItem.statsId },
+                data: item.stats,
+            });
+        }
+
+        return db.item.update({
+            where: { id },
+            data: {
+                name: item.name,
+                description: item.description,
+                type: item.type,
+                requiredLevel: item.requiredLevel,
             },
         });
     }
