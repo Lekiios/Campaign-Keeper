@@ -62,3 +62,6 @@ export type UpdateItemBody = Static<typeof updateItemBodySchema>;
 
 export const updateItemResponseSchema = itemSchema;
 export type UpdateItemResponse = Static<typeof updateItemResponseSchema>;
+
+export const deleteItemParamsSchema = findItemByIdParamsSchema;
+export type DeleteItemParams = Static<typeof deleteItemParamsSchema>;

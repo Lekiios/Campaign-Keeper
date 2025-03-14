@@ -10,6 +10,7 @@ import {
     UpdateItemBody,
     UpdateItemParams,
     UpdateItemResponse,
+    DeleteItemParams,
 } from "@schemas/items.schema";
 import { ItemType } from "@prisma/client";
 import { ErrorResponse } from "@schemas/common.schema";
@@ -147,6 +148,17 @@ export class ItemsController {
                 requiredLevel: updatedItem.requiredLevel ?? undefined,
                 stats: itemStats,
             },
+        };
+    }
+
+    async deleteItemById(
+        params: DeleteItemParams,
+    ): Promise<ControllerResponse<undefined>> {
+        const { id } = params;
+        await this.itemsService.delete(id);
+        return {
+            statusCode: 204,
+            body: undefined,
         };
     }
 }

@@ -13,6 +13,7 @@ import {
     updateItemParamsSchema,
     updateItemBodySchema,
     updateItemResponseSchema,
+    deleteItemParamsSchema,
 } from "@schemas/items.schema";
 import { ErrorResponseSchema } from "@schemas/common.schema";
 
@@ -31,7 +32,7 @@ server.post(
     },
     async (request, reply) => {
         const response = await itemsController.createItem(request.body);
-        return reply.status(response.statusCode).send(response.body);
+        return reply.code(response.statusCode).send(response.body);
     },
 );
 
@@ -49,7 +50,7 @@ server.get(
     },
     async (request, reply) => {
         const response = await itemsController.findItemById(request.params);
-        return reply.status(response.statusCode).send(response.body);
+        return reply.code(response.statusCode).send(response.body);
     },
 );
 
@@ -64,7 +65,7 @@ server.get(
     },
     async (request, reply) => {
         const response = await itemsController.findAllItems(request.query);
-        return reply.status(response.statusCode).send(response.body);
+        return reply.code(response.statusCode).send(response.body);
     },
 );
 
@@ -86,6 +87,21 @@ server.patch(
             request.params,
             request.body,
         );
-        return reply.status(response.statusCode).send(response.body);
+        return reply.code(response.statusCode).send(response.body);
+    },
+);
+
+server.delete(
+    "/api/items/:id",
+    {
+        schema: {
+            params: deleteItemParamsSchema,
+            response: { 204: {} },
+            tags: ["Items"],
+        },
+    },
+    async (request, reply) => {
+        const response = await itemsController.deleteItemById(request.params);
+        return reply.code(response.statusCode).send(response.body);
     },
 );

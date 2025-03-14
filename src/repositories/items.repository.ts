@@ -81,4 +81,15 @@ export class ItemsRepository {
             },
         });
     }
+
+    /**
+     * Delete an item in the database
+     * @param id id of the item to delete
+     */
+    async delete(id: number) {
+        return db.item.delete({
+            where: { id },
+            include: { stats: true },
+        });
+    }
 }

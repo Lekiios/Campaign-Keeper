@@ -46,4 +46,12 @@ export class ItemsService {
     async update(id: number, item: ItemUpdateEntity) {
         return this.itemsRepository.update(id, item);
     }
+
+    /**
+     * Delete an item in the database
+     * @param id id of the item to delete
+     */
+    async delete(id: number) {
+        return this.itemsRepository.delete(id);
+    }
 }
