@@ -45,4 +45,12 @@ export class CharactersService {
     async update(id: number, character: CharacterUpdateEntity) {
         return this.charactersRepository.update(id, character);
     }
+
+    /**
+     * Get the stats of a character
+     * @param id id of the character
+     */
+    async getCharacterStats(id: number) {
+        return this.charactersRepository.getCharacterStats(id);
+    }
 }

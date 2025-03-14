@@ -12,6 +12,7 @@ const main = async () => {
             await import("@routes/users.route"),
             await import("@routes/classes.route"),
             await import("@routes/spells.route"),
+            await import("@routes/characters.route"),
         ]);
 
         await server.listen({
