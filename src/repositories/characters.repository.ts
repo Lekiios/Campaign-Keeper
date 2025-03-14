@@ -79,7 +79,29 @@ export class CharactersRepository {
     getCharacterStats(id: number) {
         return db.character.findUnique({
             where: { id },
-            include: { stats: true },
+            select: { stats: true },
+        });
+    }
+
+    /**
+     * Get the user of a character
+     * @param id id of the character
+     */
+    getCharacterUser(id: number) {
+        return db.character.findUnique({
+            where: { id },
+            select: { user: true },
+        });
+    }
+
+    /**
+     * Get the class of a character
+     * @param id id of the character
+     */
+    getCharacterClass(id: number) {
+        return db.character.findUnique({
+            where: { id },
+            select: { class: true },
         });
     }
 }

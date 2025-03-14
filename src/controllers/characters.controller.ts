@@ -127,16 +127,16 @@ export class CharactersController {
         });
 
         const res = characters.map(async (character) => {
-            _class = await this.classesService.findById(character.classId);
-
+            const _class = await this.classesService.findById(
+                character.classId,
+            );
             if (!_class) {
                 throw new Error(
                     "Internal Error - Something went wrong in classes entities!",
                 );
             }
 
-            user = await this.usersService.findById(character.userId);
-
+            const user = await this.usersService.findById(character.userId);
             if (!user) {
                 throw new Error(
                     "Internal Error - Something went wrong in Users entities!",
@@ -146,7 +146,6 @@ export class CharactersController {
             const stats = await this.charactersService.getCharacterStats(
                 character.id,
             );
-
             if (!stats) {
                 throw new Error(
                     "Internal Error - Something went wrong in Stats entities!",
