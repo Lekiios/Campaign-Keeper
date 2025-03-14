@@ -2,6 +2,8 @@ import { server } from "@providers/server";
 import {
     createCharacterBodySchema,
     createCharacterResponseSchema,
+    findAllCharactersQuerySchema,
+    findAllCharactersResponseSchema,
 } from "@schemas/characters.schema";
 import { ErrorResponseSchema } from "@schemas/common.schema";
 import { ClassesService } from "@services/classes.service";
@@ -19,6 +21,24 @@ const charactersController = new CharactersController(
     charactersService,
     classService,
     usersService,
+);
+
+server.get(
+    "/api/characters",
+    {
+        schema: {
+            querystring: findAllCharactersQuerySchema,
+            response: {
+                200: findAllCharactersResponseSchema,
+                404: ErrorResponseSchema,
+            },
+            tags: ["Characters"],
+        },
+    },
+    async (request, reply) => {
+        const res = await charactersController.findAllCharacters(request.query);
+        return reply.code(res.statusCode).send(res.body);
+    },
 );
 
 server.post(

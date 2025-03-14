@@ -25,6 +25,7 @@ export const charactersSchema = t.Object({
     stats: Stats,
     user: t.Object({ id: t.Number(), username: t.String() }),
 });
+export type Characters = Static<typeof charactersSchema>;
 
 export const createCharacterBodySchema = t.Object({
     name: t.String(),
@@ -45,4 +46,19 @@ export type CreateCharacterBody = Static<typeof createCharacterBodySchema>;
 export const createCharacterResponseSchema = charactersSchema;
 export type CreateCharacterResponse = Static<
     typeof createCharacterResponseSchema
+>;
+
+export const findAllCharactersQuerySchema = t.Object({
+    page: t.Optional(t.Number()),
+    count: t.Optional(t.Number()),
+    classId: t.Optional(t.Number()),
+    userId: t.Optional(t.Number()),
+});
+export type FindAllCharactersQuery = Static<
+    typeof findAllCharactersQuerySchema
+>;
+
+export const findAllCharactersResponseSchema = t.Array(charactersSchema);
+export type FindAllCharactersResponse = Static<
+    typeof findAllCharactersResponseSchema
 >;

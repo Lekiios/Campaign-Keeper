@@ -23,11 +23,20 @@ export class CharactersRepository {
      * Read multiple character from the database
      * @param [page=0] page to start reading from
      * @param [count=10] number of characters to read
+     * @param filter Object that contains the filter data: classId or userId
      */
-    findAll(page: number = 0, count: number = 10) {
+    findAll(
+        page: number = 0,
+        count: number = 10,
+        filter?: { classId?: number; userId?: number },
+    ) {
         return db.character.findMany({
             skip: page * count,
             take: count,
+            where: {
+                classId: filter?.classId,
+                userId: filter?.userId,
+            },
         });
     }
 

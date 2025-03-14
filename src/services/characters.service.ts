@@ -16,9 +16,14 @@ export class CharactersService {
      * Read multiple character from the database
      * @param page page to start reading from
      * @param count number of characters to read
+     * @param filter Object that contains the filter data: classId or userId
      */
-    async findAll(page?: number, count?: number) {
-        return this.charactersRepository.findAll(page, count);
+    async findAll(
+        page?: number,
+        count?: number,
+        filter?: { classId?: number; userId?: number },
+    ) {
+        return this.charactersRepository.findAll(page, count, filter);
     }
 
     /**
@@ -51,6 +56,7 @@ export class CharactersService {
      * @param id id of the character
      */
     async getCharacterStats(id: number) {
-        return this.charactersRepository.getCharacterStats(id);
+        const res = this.charactersRepository.getCharacterStats(id);
+        return res.stats();
     }
 }
