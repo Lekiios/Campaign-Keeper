@@ -19,4 +19,4 @@ export type ItemAllStatsEntity = Omit<Item, "statsId"> & {
     stats: Omit<Stats, "id">;
 };
 export type ItemCreateEntity = Omit<ItemAllStatsEntity, "id">;
-export type ItemUpdateEntity = Partial<ItemAllStatsEntity>;
+export type ItemUpdateEntity = Partial<ItemCreateEntity>;
