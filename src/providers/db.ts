@@ -1,4 +1,4 @@
-import { User, PrismaClient, Class, Item, Stats } from "@prisma/client";
+import { User, PrismaClient, Class, Item, Stats, Spell } from "@prisma/client";
 
 export const createDbClient = () => {
     return new PrismaClient({
@@ -20,3 +20,7 @@ export type ItemAllStatsEntity = Omit<Item, "statsId"> & {
 };
 export type ItemCreateEntity = Omit<ItemAllStatsEntity, "id">;
 export type ItemUpdateEntity = Partial<ItemCreateEntity>;
+
+export type SpellEntity = Spell;
+export type SpellCreateEntity = Omit<Spell, "id">;
+export type SpellUpdateEntity = Partial<Spell>;

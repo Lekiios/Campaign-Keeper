@@ -9,8 +9,9 @@ const main = async () => {
         await configurePlugins();
 
         await Promise.all([
-            await import("@routes/user.route"),
-            await import("@routes/class.route"),
+            await import("@routes/users.route"),
+            await import("@routes/classes.route"),
+            await import("@routes/spells.route"),
             await import("@routes/items.route"),
         ]);
 
