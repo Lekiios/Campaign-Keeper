@@ -10,6 +10,15 @@ const Stats = t.Object({
     charisma: t.Number(),
 });
 
+const OptionalStats = t.Object({
+    strength: t.Optional(t.Number()),
+    dexterity: t.Optional(t.Number()),
+    constitution: t.Optional(t.Number()),
+    intelligence: t.Optional(t.Number()),
+    wisdom: t.Optional(t.Number()),
+    charisma: t.Optional(t.Number()),
+});
+
 export const charactersSchema = t.Object({
     id: t.Number(),
     name: t.String(),
@@ -61,4 +70,40 @@ export type FindAllCharactersQuery = Static<
 export const findAllCharactersResponseSchema = t.Array(charactersSchema);
 export type FindAllCharactersResponse = Static<
     typeof findAllCharactersResponseSchema
+>;
+
+export const findCharacterByIdParamsSchema = t.Object({ id: t.Number() });
+export type FindCharacterByIdParams = Static<
+    typeof findCharacterByIdParamsSchema
+>;
+
+export const findCharacterByIdResponseSchema = charactersSchema;
+export type FindCharacterByIdResponse = Static<
+    typeof findCharacterByIdResponseSchema
+>;
+
+export const deleteCharacterParamsSchema = t.Object({ id: t.Number() });
+export type DeleteCharacterParams = Static<typeof deleteCharacterParamsSchema>;
+
+export const updateCharacterParamsSchema = t.Object({ id: t.Number() });
+export type UpdateCharacterParams = Static<typeof updateCharacterParamsSchema>;
+
+export const updateCharacterBodySchema = t.Object({
+    name: t.Optional(t.String()),
+    description: t.Optional(t.String()),
+    level: t.Optional(t.Number()),
+    requiredXp: t.Optional(t.Number()),
+    xp: t.Optional(t.Number()),
+    maxHp: t.Optional(t.Number()),
+    money: t.Optional(t.Number()),
+    inventorySize: t.Optional(t.Number()),
+    classId: t.Optional(t.Number()),
+    stats: t.Optional(OptionalStats),
+    userId: t.Optional(t.Number()),
+});
+export type UpdateCharacterBody = Static<typeof updateCharacterBodySchema>;
+
+export const updateCharacterResponseSchema = charactersSchema;
+export type UpdateCharacterResponse = Static<
+    typeof updateCharacterResponseSchema
 >;

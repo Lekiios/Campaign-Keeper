@@ -57,6 +57,7 @@ export class CharactersRepository {
     delete(id: number) {
         return db.character.delete({
             where: { id },
+            include: { stats: true },
         });
     }
 
@@ -65,7 +66,21 @@ export class CharactersRepository {
      * @param id id of the character to update
      * @param character Object that contains the character data
      */
-    update(id: number, character: CharacterUpdateEntity) {
+    async update(id: number, character: CharacterUpdateEntity) {
+        if (character.stats) {
+            const res = await this.findCharacterStatsById(id);
+            if (!res) {
+                throw new Error(
+                    "Internal Error - Something went wrong in Stats entities!",
+                );
+            }
+
+            await db.stats.update({
+                where: { id: res.stats.id },
+                data: character.stats,
+            });
+        }
+
         return db.character.update({
             where: { id },
             data: { ...character, stats: undefined },
@@ -76,32 +91,10 @@ export class CharactersRepository {
      * Get the stats of a character
      * @param id id of the character
      */
-    getCharacterStats(id: number) {
+    findCharacterStatsById(id: number) {
         return db.character.findUnique({
             where: { id },
             select: { stats: true },
-        });
-    }
-
-    /**
-     * Get the user of a character
-     * @param id id of the character
-     */
-    getCharacterUser(id: number) {
-        return db.character.findUnique({
-            where: { id },
-            select: { user: true },
-        });
-    }
-
-    /**
-     * Get the class of a character
-     * @param id id of the character
-     */
-    getCharacterClass(id: number) {
-        return db.character.findUnique({
-            where: { id },
-            select: { class: true },
         });
     }
 }

@@ -55,8 +55,8 @@ export class CharactersService {
      * Get the stats of a character
      * @param id id of the character
      */
-    async getCharacterStats(id: number) {
-        const res = this.charactersRepository.getCharacterStats(id);
+    async findCharacterStatById(id: number) {
+        const res = this.charactersRepository.findCharacterStatsById(id);
         return res.stats();
     }
 }

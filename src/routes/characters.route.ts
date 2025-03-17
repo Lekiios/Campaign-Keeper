@@ -2,8 +2,14 @@ import { server } from "@providers/server";
 import {
     createCharacterBodySchema,
     createCharacterResponseSchema,
+    deleteCharacterParamsSchema,
     findAllCharactersQuerySchema,
     findAllCharactersResponseSchema,
+    findCharacterByIdParamsSchema,
+    findCharacterByIdResponseSchema,
+    updateCharacterBodySchema,
+    updateCharacterParamsSchema,
+    updateCharacterResponseSchema,
 } from "@schemas/characters.schema";
 import { ErrorResponseSchema } from "@schemas/common.schema";
 import { ClassesService } from "@services/classes.service";
@@ -55,6 +61,63 @@ server.post(
     },
     async (request, reply) => {
         const res = await charactersController.createCharacter(request.body);
+        return reply.code(res.statusCode).send(res.body);
+    },
+);
+
+server.get(
+    "/api/characters/:id",
+    {
+        schema: {
+            params: findCharacterByIdParamsSchema,
+            response: {
+                200: findCharacterByIdResponseSchema,
+                404: ErrorResponseSchema,
+            },
+            tags: ["Characters"],
+        },
+    },
+    async (request, reply) => {
+        const res = await charactersController.findCharacterById(
+            request.params,
+        );
+        return reply.code(res.statusCode).send(res.body);
+    },
+);
+
+server.delete(
+    "/api/characters/:id",
+    {
+        schema: {
+            params: deleteCharacterParamsSchema,
+            response: { 204: {} },
+            tags: ["Characters"],
+        },
+    },
+    async (request, reply) => {
+        const res = await charactersController.deleteCharacter(request.params);
+        return reply.code(res.statusCode).send(res.body);
+    },
+);
+
+server.patch(
+    "/api/characters/:id",
+    {
+        schema: {
+            params: updateCharacterParamsSchema,
+            body: updateCharacterBodySchema,
+            response: {
+                200: updateCharacterResponseSchema,
+                404: ErrorResponseSchema,
+            },
+            tags: ["Characters"],
+        },
+    },
+    async (request, reply) => {
+        const res = await charactersController.updateCharacter(
+            request.params,
+            request.body,
+        );
         return reply.code(res.statusCode).send(res.body);
     },
 );

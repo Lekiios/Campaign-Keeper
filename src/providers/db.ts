@@ -30,4 +30,7 @@ export type CharacterAllStatsEntity = Omit<Character, "statsId"> & {
     stats: Omit<Stats, "id">;
 };
 export type CharacterCreateEntity = Omit<CharacterAllStatsEntity, "id">;
-export type CharacterUpdateEntity = Partial<CharacterAllStatsEntity>;
+export type CharacterPartialAllStatsEntity = Omit<Character, "statsId"> & {
+    stats: Partial<Omit<Stats, "id">>;
+};
+export type CharacterUpdateEntity = Partial<CharacterPartialAllStatsEntity>;
