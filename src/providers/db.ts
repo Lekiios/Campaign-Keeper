@@ -5,9 +5,8 @@ import {
     Spell,
     Character,
     Stats,
-    Item
+    Item,
 } from "@prisma/client";
-
 
 export const createDbClient = () => {
     return new PrismaClient({
