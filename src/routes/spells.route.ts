@@ -1,8 +1,6 @@
 import { SpellsService } from "@services/spells.service";
 import { SpellsRepository } from "@repositories/spells.repository";
 import { SpellsController } from "@controllers/spells.controller";
-import { ClassesRepository } from "@repositories/classes.repository";
-import { ClassesService } from "@services/classes.service";
 import { server } from "@providers/server";
 import {
     createSpellBodySchema,
@@ -19,8 +17,7 @@ import {
 import { ErrorResponseSchema } from "@schemas/common.schema";
 
 const spellsService = new SpellsService(new SpellsRepository());
-const classService = new ClassesService(new ClassesRepository());
-const spellsController = new SpellsController(spellsService, classService);
+const spellsController = new SpellsController(spellsService);
 
 server.get(
     "/api/spells",
@@ -30,6 +27,7 @@ server.get(
             response: {
                 200: findAllSpellsResponseSchema,
                 404: ErrorResponseSchema,
+                500: ErrorResponseSchema,
             },
             tags: ["Spells"],
         },
@@ -66,6 +64,7 @@ server.get(
             response: {
                 200: findSpellByIdResponseSchema,
                 404: ErrorResponseSchema,
+                500: ErrorResponseSchema,
             },
             tags: ["Spells"],
         },
@@ -83,6 +82,7 @@ server.delete(
             params: deleteSpellParamsSchema,
             response: {
                 204: {},
+                404: ErrorResponseSchema,
             },
             tags: ["Spells"],
         },
@@ -102,6 +102,7 @@ server.patch(
             response: {
                 200: updateSpellResponseSchema,
                 404: ErrorResponseSchema,
+                500: ErrorResponseSchema,
             },
             tags: ["Spells"],
         },
