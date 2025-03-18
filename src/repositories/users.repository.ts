@@ -44,11 +44,11 @@ export class UsersRepository {
      * @param id id of the user to delete
      */
     async delete(id: number) {
-        const user = await db.user.findUnique({
+        const findUser = await db.user.findUnique({
             where: { id },
         });
 
-        if (!user) {
+        if (!findUser) {
             throw new EntityNotFoundException(`User with id ${id} not found`);
         }
 
@@ -60,20 +60,20 @@ export class UsersRepository {
     /**
      * Update a user in the database
      * @param id id of the user to update
-     * @param player
+     * @param user
      */
-    async update(id: number, player: UserUpdateEntity) {
-        const user = await db.user.findUnique({
+    async update(id: number, user: UserUpdateEntity) {
+        const findUser = await db.user.findUnique({
             where: { id },
         });
 
-        if (!user) {
+        if (!findUser) {
             throw new EntityNotFoundException(`User with id ${id} not found`);
         }
 
         return db.user.update({
             where: { id },
-            data: player,
+            data: user,
         });
     }
 }
