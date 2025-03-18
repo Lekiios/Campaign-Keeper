@@ -25,7 +25,7 @@ export class ClassesService {
      * Read a class from the database
      * @param id id of the class to read
      */
-    async findById(id: number) {
+    findById(id: number) {
         return this.classRepository.findById(id);
     }
 

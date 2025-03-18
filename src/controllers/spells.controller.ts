@@ -101,8 +101,7 @@ export class SpellsController {
                     };
                 }
 
-                _class = await this.classService.findById(classId);
-
+                const _class = await this.classService.findById(classId);
                 if (!_class) {
                     throw new Error(
                         "Internal Error - Something went wrong in classes entities!",

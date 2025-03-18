@@ -45,12 +45,12 @@ enum ItemType {
 }
 
 model Campaign {
-  id          Int            @id @default(autoincrement())
-  name        String
-  description String?
-  status      CampaignStatus @default(PLANNED)
-  characters  Character[]
-  Session     Session[]
+  id                Int                 @id @default(autoincrement())
+  name              String
+  description       String?
+  status            CampaignStatus      @default(PLANNED)
+  CampaignCharacter CampaignCharacter[]
+  Session           Session[]
 }
 
 model Session {
@@ -90,27 +90,26 @@ model Stats {
 }
 
 model Character {
-  id              Int              @id @default(autoincrement())
-  name            String
-  description     String?
-  level           Int?             @default(1)
-  requiredXp      Int
-  xp              Int?             @default(0)
-  maxHp           Int
-  currentHp       Int
-  money           Int?             @default(0)
-  inventorySize   Int
-  classId         Int
-  statsId         Int
-  userId          Int
-  campaignId      Int?
-  class           Class            @relation(fields: [classId], references: [id])
-  stats           Stats            @relation(fields: [statsId], references: [id])
-  user            User             @relation(fields: [userId], references: [id])
-  campaign        Campaign?        @relation(fields: [campaignId], references: [id])
-  inventoryItems  InventoryItem[]
-  equipment       Equipment[]
-  characterSpells CharacterSpell[]
+  id                Int                 @id @default(autoincrement())
+  name              String
+  description       String?
+  level             Int                 @default(1)
+  requiredXp        Int                 @default(100)
+  xp                Int                 @default(0)
+  maxHp             Int
+  currentHp         Int
+  money             Int                 @default(0)
+  inventorySize     Int
+  classId           Int
+  statsId           Int
+  userId            Int
+  class             Class               @relation(fields: [classId], references: [id])
+  stats             Stats               @relation(fields: [statsId], references: [id])
+  user              User                @relation(fields: [userId], references: [id])
+  inventoryItems    InventoryItem[]
+  equipment         Equipment[]
+  characterSpells   CharacterSpell[]
+  CampaignCharacter CampaignCharacter[]
 }
 
 model Item {
@@ -159,4 +158,12 @@ model CharacterSpell {
   spellId     Int
   character   Character @relation(fields: [characterId], references: [id])
   spell       Spell     @relation(fields: [spellId], references: [id])
+}
+
+model CampaignCharacter {
+  id          Int       @id @default(autoincrement())
+  characterId Int
+  campaignId  Int
+  character   Character @relation(fields: [characterId], references: [id])
+  campaign    Campaign  @relation(fields: [campaignId], references: [id])
 }
