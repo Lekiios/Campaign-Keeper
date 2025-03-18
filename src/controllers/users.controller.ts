@@ -13,6 +13,7 @@ import {
 } from "@schemas/users.schema";
 import { ControllerResponse } from "@controllers/controllers";
 import { ErrorResponse } from "@schemas/common.schema";
+import { EntityNotFoundException } from "src/exceptions/entity-not-found.exception";
 
 export class UsersController {
     constructor(private readonly userService: UsersService) {}
@@ -65,38 +66,55 @@ export class UsersController {
         params: FindUserByIdParams,
     ): Promise<ControllerResponse<FindUserByIdResponse | ErrorResponse>> {
         const { id } = params;
-        const user = await this.userService.findById(id);
+        try {
+            const user = await this.userService.findById(id);
 
-        if (!user) {
             return {
-                statusCode: 404,
+                statusCode: 200,
                 body: {
-                    message: `User with id ${id} not found`,
+                    id: user.id,
+                    username: user.username,
+                    email: user.email,
+                    password: user.password,
+                    profilePicture: user.profilePicture ?? undefined,
                 },
             };
+        } catch (error) {
+            if (error instanceof EntityNotFoundException) {
+                return {
+                    statusCode: 404,
+                    body: {
+                        message: error.message,
+                    },
+                };
+            } else {
+                throw error;
+            }
         }
-
-        return {
-            statusCode: 200,
-            body: {
-                id: user.id,
-                username: user.username,
-                email: user.email,
-                password: user.password,
-                profilePicture: user.profilePicture ?? undefined,
-            },
-        };
     }
 
     async deleteUserById(
         params: DeleteUserParams,
-    ): Promise<ControllerResponse<undefined>> {
+    ): Promise<ControllerResponse<ErrorResponse | undefined>> {
         const { id } = params;
-        await this.userService.delete(id);
-        return {
-            statusCode: 204,
-            body: undefined,
-        };
+        try {
+            await this.userService.delete(id);
+            return {
+                statusCode: 204,
+                body: undefined,
+            };
+        } catch (error) {
+            if (error instanceof EntityNotFoundException) {
+                return {
+                    statusCode: 404,
+                    body: {
+                        message: error.message,
+                    },
+                };
+            } else {
+                throw error;
+            }
+        }
     }
 
     async updateUserById(
@@ -106,31 +124,35 @@ export class UsersController {
         const { id } = params;
         const { username, email, password, profilePicture } = body;
 
-        const updatedUser = await this.userService.update(id, {
-            username,
-            email,
-            password,
-            profilePicture: profilePicture,
-        });
+        try {
+            const updatedUser = await this.userService.update(id, {
+                username,
+                email,
+                password,
+                profilePicture: profilePicture,
+            });
 
-        if (!updatedUser) {
             return {
-                statusCode: 404,
+                statusCode: 200,
                 body: {
-                    message: `User with id ${id} not found`,
+                    id: updatedUser.id,
+                    username: updatedUser.username,
+                    email: updatedUser.email,
+                    password: updatedUser.password,
+                    profilePicture: updatedUser.profilePicture ?? undefined,
                 },
             };
+        } catch (error) {
+            if (error instanceof EntityNotFoundException) {
+                return {
+                    statusCode: 404,
+                    body: {
+                        message: error.message,
+                    },
+                };
+            } else {
+                throw error;
+            }
         }
-
-        return {
-            statusCode: 200,
-            body: {
-                id: updatedUser.id,
-                username: updatedUser.username,
-                email: updatedUser.email,
-                password: updatedUser.password,
-                profilePicture: updatedUser.profilePicture ?? undefined,
-            },
-        };
     }
 }
