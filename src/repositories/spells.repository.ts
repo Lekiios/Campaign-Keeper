@@ -113,9 +113,9 @@ export class SpellsRepository {
 
     /**
      * Get the spell class from the database
-     * @param id id of the spell to get the class
+     * @param id id of the spell to get the class from
      */
-    async getSpellClass(id: number) {
+    async findSpellClassById(id: number) {
         const spell = await db.spell.findUnique({
             where: { id },
             include: {

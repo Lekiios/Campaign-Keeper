@@ -14,6 +14,8 @@ import {
 } from "@schemas/items.schema";
 import { ItemType } from "@prisma/client";
 import { ErrorResponse } from "@schemas/common.schema";
+import { EntityNotFoundException } from "../exceptions/entity-not-found.exception";
+import { EntityInternalErrorException } from "../exceptions/entity-internal-error.exception";
 
 export class ItemsController {
     constructor(private readonly itemsService: ItemsService) {}
@@ -48,43 +50,39 @@ export class ItemsController {
         params: FindItemByIdParams,
     ): Promise<ControllerResponse<FindItemByIdResponse | ErrorResponse>> {
         const { id } = params;
-        const item = await this.itemsService.findById(id);
+        try {
+            const item = await this.itemsService.findById(id);
 
-        if (!item) {
+            const stats = await this.itemsService.findItemStatsById(id);
+
             return {
-                statusCode: 404,
+                statusCode: 200,
                 body: {
-                    message: `Item with id ${id} not found`,
+                    id: item.id,
+                    name: item.name,
+                    description: item.description ?? undefined,
+                    type: item.type,
+                    requiredLevel: item.requiredLevel ?? undefined,
+                    stats: {
+                        strength: stats.strength,
+                        dexterity: stats.dexterity,
+                        constitution: stats.constitution,
+                        intelligence: stats.intelligence,
+                        wisdom: stats.wisdom,
+                        charisma: stats.charisma,
+                    },
                 },
             };
+        } catch (error) {
+            if (error instanceof EntityNotFoundException) {
+                return {
+                    statusCode: 404,
+                    body: { message: error.message },
+                };
+            } else {
+                throw error;
+            }
         }
-
-        const stats = await this.itemsService.findItemStatsById(id);
-
-        if (!stats) {
-            throw new Error(
-                "Internal Error - Something went wrong in items' stats entities :(",
-            );
-        }
-
-        return {
-            statusCode: 200,
-            body: {
-                id: item.id,
-                name: item.name,
-                description: item.description ?? undefined,
-                type: item.type,
-                requiredLevel: item.requiredLevel ?? undefined,
-                stats: {
-                    strength: stats.strength,
-                    dexterity: stats.dexterity,
-                    constitution: stats.constitution,
-                    intelligence: stats.intelligence,
-                    wisdom: stats.wisdom,
-                    charisma: stats.charisma,
-                },
-            },
-        };
     }
 
     async findAllItems(
@@ -115,50 +113,64 @@ export class ItemsController {
         const { id } = params;
         const { name, description, type, requiredLevel, stats } = body;
 
-        const updatedItem = await this.itemsService.update(id, {
-            name,
-            description,
-            type,
-            requiredLevel,
-            stats,
-        });
+        try {
+            const updatedItem = await this.itemsService.update(id, {
+                name,
+                description,
+                type,
+                requiredLevel,
+                stats,
+            });
 
-        if (!updatedItem) {
+            const itemStats = await this.itemsService.findItemStatsById(id);
+
             return {
-                statusCode: 404,
-                body: { message: `Item with id ${id} not found` },
+                statusCode: 200,
+                body: {
+                    id: updatedItem.id,
+                    name: updatedItem.name,
+                    description: updatedItem.description ?? undefined,
+                    type: updatedItem.type,
+                    requiredLevel: updatedItem.requiredLevel ?? undefined,
+                    stats: itemStats,
+                },
             };
+        } catch (error) {
+            if (error instanceof EntityNotFoundException) {
+                return {
+                    statusCode: 404,
+                    body: { message: error.message },
+                };
+            } else if (error instanceof EntityInternalErrorException) {
+                return {
+                    statusCode: 500,
+                    body: { message: error.message },
+                };
+            } else {
+                throw error;
+            }
         }
-
-        const itemStats = await this.itemsService.findItemStatsById(id);
-
-        if (!itemStats) {
-            throw new Error(
-                "Internal Error - Something went wrong in items' stats entities :(",
-            );
-        }
-
-        return {
-            statusCode: 200,
-            body: {
-                id: updatedItem.id,
-                name: updatedItem.name,
-                description: updatedItem.description ?? undefined,
-                type: updatedItem.type,
-                requiredLevel: updatedItem.requiredLevel ?? undefined,
-                stats: itemStats,
-            },
-        };
     }
 
     async deleteItemById(
         params: DeleteItemParams,
-    ): Promise<ControllerResponse<undefined>> {
+    ): Promise<ControllerResponse<ErrorResponse | undefined>> {
         const { id } = params;
-        await this.itemsService.delete(id);
-        return {
-            statusCode: 204,
-            body: undefined,
-        };
+        try {
+            await this.itemsService.delete(id);
+            return {
+                statusCode: 204,
+                body: undefined,
+            };
+        } catch (error) {
+            if (error instanceof EntityNotFoundException) {
+                return {
+                    statusCode: 404,
+                    body: { message: error.message },
+                };
+            } else {
+                throw error;
+            }
+        }
     }
 }

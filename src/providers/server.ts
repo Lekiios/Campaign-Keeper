@@ -38,5 +38,6 @@ export const configurePlugins = async () => {
     });
     await server.register(fastifySwaggerUi, {
         routePrefix: "/swagger-ui",
+        theme: { title: "Campaign Keeper API" },
     });
 };

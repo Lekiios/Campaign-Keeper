@@ -1,5 +1,7 @@
 import { db } from "../index";
 import { ItemCreateEntity, ItemUpdateEntity } from "@providers/db";
+import { EntityNotFoundException } from "../exceptions/entity-not-found.exception";
+import { EntityInternalErrorException } from "../exceptions/entity-internal-error.exception";
 
 export class ItemsRepository {
     /**
@@ -21,10 +23,23 @@ export class ItemsRepository {
 
     /**
      * Find all stats of an item with its ID
-     * @param id
+     * @param id id of the item to get the stats from
      */
-    findItemStatsById(id: number) {
-        return db.item.findUnique({ where: { id }, select: { stats: true } });
+    async findItemStatsById(id: number) {
+        const item = await db.item.findUnique({
+            where: { id },
+            include: { stats: true },
+        });
+        if (!item) {
+            throw new EntityNotFoundException(`Item with id ${id} not found`);
+        }
+        if (!item.stats) {
+            throw new EntityInternalErrorException(
+                `Stats of item with id ${id} not found`,
+            );
+        }
+
+        return item.stats;
     }
 
     /**
@@ -32,9 +47,15 @@ export class ItemsRepository {
      * @param id
      */
     async findById(id: number) {
-        return db.item.findUnique({
+        const item = await db.item.findUnique({
             where: { id },
         });
+
+        if (!item) {
+            throw new EntityNotFoundException(`Item with id ${id} not found`);
+        }
+
+        return item;
     }
 
     /**
@@ -59,16 +80,21 @@ export class ItemsRepository {
      */
     async update(id: number, item: ItemUpdateEntity) {
         if (item.stats) {
-            const previousItem = await this.findById(id);
-
-            if (!previousItem) {
-                return null;
-            }
+            // Find the stats of the item & will check if the item exists
+            const stats = await this.findItemStatsById(id);
 
             await db.stats.update({
-                where: { id: previousItem.statsId },
+                where: { id: stats.id },
                 data: item.stats,
             });
+        } else {
+            // Check if the item exists if not done by findItemStatsById
+            const findItem = await db.item.findUnique({ where: { id } });
+            if (!findItem) {
+                throw new EntityNotFoundException(
+                    `Item with id ${id} not found`,
+                );
+            }
         }
 
         return db.item.update({
@@ -87,6 +113,12 @@ export class ItemsRepository {
      * @param id id of the item to delete
      */
     async delete(id: number) {
+        const item = await db.item.findUnique({ where: { id } });
+
+        if (!item) {
+            throw new EntityNotFoundException(`Item with id ${id} not found`);
+        }
+
         return db.item.delete({
             where: { id },
             include: { stats: true },

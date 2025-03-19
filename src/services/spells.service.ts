@@ -57,6 +57,6 @@ export class SpellsService {
      * @param id id of the spell to get the class from
      */
     async getSpellClass(id: number) {
-        return this.spellsRepository.getSpellClass(id);
+        return this.spellsRepository.findSpellClassById(id);
     }
 }
