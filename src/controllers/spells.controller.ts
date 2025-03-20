@@ -14,8 +14,6 @@ import {
     UpdateSpellParams,
     UpdateSpellResponse,
 } from "@schemas/spells.schema";
-import { EntityNotFoundException } from "../exceptions/entity-not-found.exception";
-import { EntityInternalErrorException } from "../exceptions/entity-internal-error.exception";
 
 export class SpellsController {
     constructor(private readonly spellService: SpellsService) {}
@@ -25,48 +23,35 @@ export class SpellsController {
     ): Promise<ControllerResponse<CreateSpellResponse | ErrorResponse>> {
         const { name, description, type, requiredLevel, classId } = body;
 
-        try {
-            const spell = await this.spellService.create({
-                name,
-                description: description ?? null,
-                type,
-                requiredLevel: requiredLevel ?? null,
-                classId: classId ?? null,
-            });
+        const spell = await this.spellService.create({
+            name,
+            description: description ?? null,
+            type,
+            requiredLevel: requiredLevel ?? null,
+            classId: classId ?? null,
+        });
 
-            const _class = classId
-                ? await this.spellService.getSpellClass(spell.id)
-                : undefined;
+        const _class = classId
+            ? await this.spellService.getSpellClass(spell.id)
+            : undefined;
 
-            return {
-                statusCode: 201,
-                body: {
-                    id: spell.id,
-                    name: spell.name,
-                    description: spell.description ?? undefined,
-                    type: spell.type,
-                    requiredLevel: spell.requiredLevel ?? undefined,
-                    class: _class
-                        ? {
-                              id: _class.id,
-                              name: _class.name,
-                              description: _class.description ?? undefined,
-                          }
-                        : undefined,
-                },
-            };
-        } catch (error) {
-            if (error instanceof EntityNotFoundException) {
-                return {
-                    statusCode: 404,
-                    body: {
-                        message: error.message,
-                    },
-                };
-            } else {
-                throw error;
-            }
-        }
+        return {
+            statusCode: 201,
+            body: {
+                id: spell.id,
+                name: spell.name,
+                description: spell.description ?? undefined,
+                type: spell.type,
+                requiredLevel: spell.requiredLevel ?? undefined,
+                class: _class
+                    ? {
+                          id: _class.id,
+                          name: _class.name,
+                          description: _class.description ?? undefined,
+                      }
+                    : undefined,
+            },
+        };
     }
 
     async findAllSpells(
@@ -74,93 +59,52 @@ export class SpellsController {
     ): Promise<ControllerResponse<FindAllSpellsResponse | ErrorResponse>> {
         const { page, count } = query;
 
-        try {
-            const filter = { classId: query?.classId, type: query?.type };
-            const spells = await this.spellService.findAll(page, count, filter);
+        const filter = { classId: query?.classId, type: query?.type };
+        const spells = await this.spellService.findAll(page, count, filter);
 
-            const res = spells.map(
-                async ({
-                    id,
-                    name,
-                    description,
-                    type,
-                    requiredLevel,
-                    classId,
-                }) => {
-                    if (!classId) {
-                        return {
-                            id,
-                            name,
-                            description: description ?? undefined,
-                            type,
-                            requiredLevel: requiredLevel ?? undefined,
-                        };
-                    }
-
-                    const _class = await this.spellService.getSpellClass(id);
-
+        const res = spells.map(
+            async ({ id, name, description, type, requiredLevel, classId }) => {
+                if (!classId) {
                     return {
                         id,
                         name,
                         description: description ?? undefined,
                         type,
                         requiredLevel: requiredLevel ?? undefined,
-                        class: {
-                            id: _class.id,
-                            name: _class.name,
-                            description: _class.description ?? undefined,
-                        },
                     };
-                },
-            );
+                }
 
-            return {
-                statusCode: 200,
-                body: await Promise.all(res),
-            };
-        } catch (error) {
-            if (error instanceof EntityNotFoundException) {
+                const _class = await this.spellService.getSpellClass(id);
+
                 return {
-                    statusCode: 404,
-                    body: {
-                        message: error.message,
+                    id,
+                    name,
+                    description: description ?? undefined,
+                    type,
+                    requiredLevel: requiredLevel ?? undefined,
+                    class: {
+                        id: _class.id,
+                        name: _class.name,
+                        description: _class.description ?? undefined,
                     },
                 };
-            } else if (error instanceof EntityInternalErrorException) {
-                return {
-                    statusCode: 500,
-                    body: {
-                        message: error.message,
-                    },
-                };
-            } else {
-                throw error;
-            }
-        }
+            },
+        );
+
+        return {
+            statusCode: 200,
+            body: await Promise.all(res),
+        };
     }
 
     async findSpellById(
         params: FindSpellByIdParams,
     ): Promise<ControllerResponse<FindSpellByIdResponse | ErrorResponse>> {
         const { id } = params;
-        try {
-            const spell = await this.spellService.findById(id);
 
-            if (!spell.classId) {
-                return {
-                    statusCode: 200,
-                    body: {
-                        id: spell.id,
-                        name: spell.name,
-                        description: spell.description ?? undefined,
-                        type: spell.type,
-                        requiredLevel: spell.requiredLevel ?? undefined,
-                    },
-                };
-            }
+        const spell = await this.spellService.findById(id);
 
-            const _class = await this.spellService.getSpellClass(spell.id);
-
+        if (!spell.classId) {
             return {
                 statusCode: 200,
                 body: {
@@ -169,56 +113,38 @@ export class SpellsController {
                     description: spell.description ?? undefined,
                     type: spell.type,
                     requiredLevel: spell.requiredLevel ?? undefined,
-                    class: {
-                        id: _class.id,
-                        name: _class.name,
-                        description: _class.description ?? undefined,
-                    },
                 },
             };
-        } catch (error) {
-            if (error instanceof EntityNotFoundException) {
-                return {
-                    statusCode: 404,
-                    body: {
-                        message: error.message,
-                    },
-                };
-            } else if (error instanceof EntityInternalErrorException) {
-                return {
-                    statusCode: 500,
-                    body: {
-                        message: error.message,
-                    },
-                };
-            } else {
-                throw error;
-            }
         }
+
+        const _class = await this.spellService.getSpellClass(spell.id);
+
+        return {
+            statusCode: 200,
+            body: {
+                id: spell.id,
+                name: spell.name,
+                description: spell.description ?? undefined,
+                type: spell.type,
+                requiredLevel: spell.requiredLevel ?? undefined,
+                class: {
+                    id: _class.id,
+                    name: _class.name,
+                    description: _class.description ?? undefined,
+                },
+            },
+        };
     }
 
     async deleteSpellById(
         params: DeleteSpellParams,
     ): Promise<ControllerResponse<ErrorResponse | undefined>> {
         const { id } = params;
-        try {
-            await this.spellService.delete(id);
-            return {
-                statusCode: 204,
-                body: undefined,
-            };
-        } catch (error) {
-            if (error instanceof EntityNotFoundException) {
-                return {
-                    statusCode: 404,
-                    body: {
-                        message: error.message,
-                    },
-                };
-            } else {
-                throw error;
-            }
-        }
+        await this.spellService.delete(id);
+        return {
+            statusCode: 204,
+            body: undefined,
+        };
     }
 
     async updateSpellById(
@@ -226,34 +152,17 @@ export class SpellsController {
         body: UpdateSpellBody,
     ): Promise<ControllerResponse<UpdateSpellResponse | ErrorResponse>> {
         const { id } = params;
-        try {
-            const { name, description, classId, requiredLevel, type } = body;
+        const { name, description, classId, requiredLevel, type } = body;
 
-            const updatedSpell = await this.spellService.update(id, {
-                name,
-                description,
-                type,
-                requiredLevel,
-                classId,
-            });
+        const updatedSpell = await this.spellService.update(id, {
+            name,
+            description,
+            type,
+            requiredLevel,
+            classId,
+        });
 
-            if (!updatedSpell.classId) {
-                return {
-                    statusCode: 200,
-                    body: {
-                        id: updatedSpell.id,
-                        name: updatedSpell.name,
-                        description: updatedSpell.description ?? undefined,
-                        type: updatedSpell.type,
-                        requiredLevel: updatedSpell.requiredLevel ?? undefined,
-                    },
-                };
-            }
-
-            const _class = await this.spellService.getSpellClass(
-                updatedSpell.id,
-            );
-
+        if (!updatedSpell.classId) {
             return {
                 statusCode: 200,
                 body: {
@@ -262,33 +171,28 @@ export class SpellsController {
                     description: updatedSpell.description ?? undefined,
                     type: updatedSpell.type,
                     requiredLevel: updatedSpell.requiredLevel ?? undefined,
-                    class: _class
-                        ? {
-                              id: _class.id,
-                              name: _class.name,
-                              description: _class.description ?? undefined,
-                          }
-                        : undefined,
                 },
             };
-        } catch (error) {
-            if (error instanceof EntityNotFoundException) {
-                return {
-                    statusCode: 404,
-                    body: {
-                        message: error.message,
-                    },
-                };
-            } else if (error instanceof EntityInternalErrorException) {
-                return {
-                    statusCode: 500,
-                    body: {
-                        message: error.message,
-                    },
-                };
-            } else {
-                throw error;
-            }
         }
+
+        const _class = await this.spellService.getSpellClass(updatedSpell.id);
+
+        return {
+            statusCode: 200,
+            body: {
+                id: updatedSpell.id,
+                name: updatedSpell.name,
+                description: updatedSpell.description ?? undefined,
+                type: updatedSpell.type,
+                requiredLevel: updatedSpell.requiredLevel ?? undefined,
+                class: _class
+                    ? {
+                          id: _class.id,
+                          name: _class.name,
+                          description: _class.description ?? undefined,
+                      }
+                    : undefined,
+            },
+        };
     }
 }

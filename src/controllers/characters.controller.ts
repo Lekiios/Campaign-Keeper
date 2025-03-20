@@ -12,8 +12,6 @@ import {
 } from "@schemas/characters.schema";
 import { ControllerResponse } from "@controllers/controllers";
 import { ErrorResponse } from "@schemas/common.schema";
-import { EntityInternalErrorException } from "../exceptions/entity-internal-error.exception";
-import { EntityNotFoundException } from "../exceptions/entity-not-found.exception";
 
 export class CharactersController {
     constructor(private readonly charactersService: CharactersService) {}
@@ -34,144 +32,61 @@ export class CharactersController {
             classId,
             stats,
         } = body;
-        try {
-            const character = await this.charactersService.create({
-                name,
-                description: description ?? null,
-                level: level ?? 1,
-                userId,
-                inventorySize,
-                maxHp,
-                currentHp: maxHp,
-                money: money ?? 0,
-                xp: xp ?? 0,
-                requiredXp: requiredXp ?? 100,
-                classId,
-                stats,
-            });
 
-            const _class = await this.charactersService.findCharacterClassById(
-                character.classId,
-            );
+        const character = await this.charactersService.create({
+            name,
+            description: description ?? null,
+            level: level ?? 1,
+            userId,
+            inventorySize,
+            maxHp,
+            currentHp: maxHp,
+            money: money ?? 0,
+            xp: xp ?? 0,
+            requiredXp: requiredXp ?? 100,
+            classId,
+            stats,
+        });
 
-            const user = await this.charactersService.findCharacterUserById(
-                character.userId,
-            );
+        const _class = await this.charactersService.findCharacterClassById(
+            character.id,
+        );
 
-            return {
-                statusCode: 201,
-                body: {
-                    ...character,
-                    description: character.description ?? undefined,
-                    class: {
-                        id: _class.id,
-                        name: _class.name,
-                        description: _class.description ?? undefined,
-                    },
-                    stats,
-                    user: { username: user.username, id: user.id },
+        const user = await this.charactersService.findCharacterUserById(
+            character.id,
+        );
+
+        return {
+            statusCode: 201,
+            body: {
+                ...character,
+                description: character.description ?? undefined,
+                class: {
+                    id: _class.id,
+                    name: _class.name,
+                    description: _class.description ?? undefined,
                 },
-            };
-        } catch (error) {
-            if (error instanceof EntityNotFoundException) {
-                return {
-                    statusCode: 404,
-                    body: {
-                        message: error.message,
-                    },
-                };
-            } else if (error instanceof EntityInternalErrorException) {
-                return {
-                    statusCode: 500,
-                    body: {
-                        message: error.message,
-                    },
-                };
-            } else {
-                throw error;
-            }
-        }
+                stats,
+                user: { username: user.username, id: user.id },
+            },
+        };
     }
 
     async findAllCharacters(
         query: FindAllCharactersQuery,
     ): Promise<ControllerResponse<FindAllCharactersResponse | ErrorResponse>> {
         const { page, count, classId, userId } = query;
-        try {
-            const characters = await this.charactersService.findAll(
-                page,
-                count,
-                {
-                    classId,
-                    userId,
-                },
-            );
+        const characters = await this.charactersService.findAll(page, count, {
+            classId,
+            userId,
+        });
 
-            const res = characters.map(async (character) => {
-                const _class =
-                    await this.charactersService.findCharacterClassById(
-                        character.classId,
-                    );
-                const user = await this.charactersService.findCharacterUserById(
-                    character.userId,
-                );
-
-                const stats =
-                    await this.charactersService.findCharacterStatsById(
-                        character.id,
-                    );
-
-                return {
-                    ...character,
-                    description: character.description ?? undefined,
-                    class: {
-                        id: _class.id,
-                        name: _class.name,
-                        description: _class.description ?? undefined,
-                    },
-                    user: { id: user.id, username: user.username },
-                    statsId: undefined,
-                    stats,
-                };
-            });
-
-            return {
-                statusCode: 200,
-                body: await Promise.all(res),
-            };
-        } catch (error) {
-            if (error instanceof EntityNotFoundException) {
-                return {
-                    statusCode: 404,
-                    body: {
-                        message: error.message,
-                    },
-                };
-            } else if (error instanceof EntityInternalErrorException) {
-                return {
-                    statusCode: 500,
-                    body: {
-                        message: error.message,
-                    },
-                };
-            } else {
-                throw error;
-            }
-        }
-    }
-
-    async findCharacterById(
-        params: FindCharacterByIdParams,
-    ): Promise<ControllerResponse<FindCharacterByIdResponse | ErrorResponse>> {
-        const { id } = params;
-        try {
-            const character = await this.charactersService.findById(id);
-
+        const res = characters.map(async (character) => {
             const _class = await this.charactersService.findCharacterClassById(
-                character.classId,
+                character.id,
             );
             const user = await this.charactersService.findCharacterUserById(
-                character.userId,
+                character.id,
             );
 
             const stats = await this.charactersService.findCharacterStatsById(
@@ -179,38 +94,51 @@ export class CharactersController {
             );
 
             return {
-                statusCode: 200,
-                body: {
-                    ...character,
-                    description: character.description ?? undefined,
-                    class: {
-                        id: _class.id,
-                        name: _class.name,
-                        description: _class.description ?? undefined,
-                    },
-                    user: { id: user.id, username: user.username },
-                    stats,
+                ...character,
+                description: character.description ?? undefined,
+                class: {
+                    id: _class.id,
+                    name: _class.name,
+                    description: _class.description ?? undefined,
                 },
+                user: { id: user.id, username: user.username },
+                statsId: undefined,
+                stats,
             };
-        } catch (error) {
-            if (error instanceof EntityNotFoundException) {
-                return {
-                    statusCode: 404,
-                    body: {
-                        message: error.message,
-                    },
-                };
-            } else if (error instanceof EntityInternalErrorException) {
-                return {
-                    statusCode: 500,
-                    body: {
-                        message: error.message,
-                    },
-                };
-            } else {
-                throw error;
-            }
-        }
+        });
+
+        return {
+            statusCode: 200,
+            body: await Promise.all(res),
+        };
+    }
+
+    async findCharacterById(
+        params: FindCharacterByIdParams,
+    ): Promise<ControllerResponse<FindCharacterByIdResponse | ErrorResponse>> {
+        const { id } = params;
+
+        const character = await this.charactersService.findById(id);
+
+        const _class = await this.charactersService.findCharacterClassById(id);
+        const user = await this.charactersService.findCharacterUserById(id);
+
+        const stats = await this.charactersService.findCharacterStatsById(id);
+
+        return {
+            statusCode: 200,
+            body: {
+                ...character,
+                description: character.description ?? undefined,
+                class: {
+                    id: _class.id,
+                    name: _class.name,
+                    description: _class.description ?? undefined,
+                },
+                user: { id: user.id, username: user.username },
+                stats,
+            },
+        };
     }
 
     async updateCharacter(
@@ -286,24 +214,12 @@ export class CharactersController {
         params: FindCharacterByIdParams,
     ): Promise<ControllerResponse<ErrorResponse | undefined>> {
         const { id } = params;
-        try {
-            await this.charactersService.delete(id);
 
-            return {
-                statusCode: 204,
-                body: undefined,
-            };
-        } catch (error) {
-            if (error instanceof EntityNotFoundException) {
-                return {
-                    statusCode: 404,
-                    body: {
-                        message: error.message,
-                    },
-                };
-            } else {
-                throw error;
-            }
-        }
+        await this.charactersService.delete(id);
+
+        return {
+            statusCode: 204,
+            body: undefined,
+        };
     }
 }

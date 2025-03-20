@@ -1,4 +1,4 @@
-import { configurePlugins, server } from "@providers/server";
+import { configureServer, server } from "@providers/server";
 import "dotenv/config";
 import "@providers/db";
 
@@ -6,7 +6,7 @@ const { SERVER_PORT = 5000, SERVER_HOST = "0.0.0.0" } = process.env;
 
 const main = async () => {
     try {
-        await configurePlugins();
+        await configureServer();
 
         await Promise.all([
             await import("@routes/users.route"),

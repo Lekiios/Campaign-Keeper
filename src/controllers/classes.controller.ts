@@ -13,7 +13,6 @@ import {
     UpdateClassParams,
     UpdateClassResponse,
 } from "@schemas/classes.schema";
-import { EntityNotFoundException } from "../exceptions/entity-not-found.exception";
 
 export class ClassesController {
     constructor(private readonly classService: ClassesService) {}
@@ -58,53 +57,28 @@ export class ClassesController {
         params: FindClassByIdParams,
     ): Promise<ControllerResponse<FindClassByIdResponse | ErrorResponse>> {
         const { id } = params;
-        try {
-            const _class = await this.classService.findById(id);
 
-            return {
-                statusCode: 200,
-                body: {
-                    id: _class.id,
-                    name: _class.name,
-                    description: _class.description ?? undefined,
-                },
-            };
-        } catch (error) {
-            if (error instanceof EntityNotFoundException) {
-                return {
-                    statusCode: 404,
-                    body: {
-                        message: error.message,
-                    },
-                };
-            } else {
-                throw error;
-            }
-        }
+        const _class = await this.classService.findById(id);
+
+        return {
+            statusCode: 200,
+            body: {
+                id: _class.id,
+                name: _class.name,
+                description: _class.description ?? undefined,
+            },
+        };
     }
 
     async deleteClassById(
         params: DeleteClassParams,
     ): Promise<ControllerResponse<ErrorResponse | undefined>> {
         const { id } = params;
-        try {
-            await this.classService.delete(id);
-            return {
-                statusCode: 204,
-                body: undefined,
-            };
-        } catch (error) {
-            if (error instanceof EntityNotFoundException) {
-                return {
-                    statusCode: 404,
-                    body: {
-                        message: error.message,
-                    },
-                };
-            } else {
-                throw error;
-            }
-        }
+        await this.classService.delete(id);
+        return {
+            statusCode: 204,
+            body: undefined,
+        };
     }
 
     async updateClassById(
@@ -114,31 +88,18 @@ export class ClassesController {
         const { id } = params;
         const { name, description } = body;
 
-        try {
-            const updatedClass = await this.classService.update(id, {
-                name,
-                description,
-            });
+        const updatedClass = await this.classService.update(id, {
+            name,
+            description,
+        });
 
-            return {
-                statusCode: 200,
-                body: {
-                    id: updatedClass.id,
-                    name: updatedClass.name,
-                    description: updatedClass.description ?? undefined,
-                },
-            };
-        } catch (error) {
-            if (error instanceof EntityNotFoundException) {
-                return {
-                    statusCode: 404,
-                    body: {
-                        message: error.message,
-                    },
-                };
-            } else {
-                throw error;
-            }
-        }
+        return {
+            statusCode: 200,
+            body: {
+                id: updatedClass.id,
+                name: updatedClass.name,
+                description: updatedClass.description ?? undefined,
+            },
+        };
     }
 }
