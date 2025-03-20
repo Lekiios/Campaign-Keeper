@@ -1,5 +1,4 @@
-import { db } from "../index";
-import { SpellCreateEntity, SpellUpdateEntity } from "@providers/db";
+import { db, SpellCreateEntity, SpellUpdateEntity } from "@providers/db";
 import { SpellType } from "@prisma/client";
 import { EntityNotFoundException } from "../exceptions/entity-not-found.exception";
 import { EntityInternalErrorException } from "../exceptions/entity-internal-error.exception";

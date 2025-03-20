@@ -1,5 +1,4 @@
-import { UserCreateEntity, UserUpdateEntity } from "@providers/db";
-import { db } from "../index";
+import { db, UserCreateEntity, UserUpdateEntity } from "@providers/db";
 import { EntityNotFoundException } from "../exceptions/entity-not-found.exception";
 
 export class UsersRepository {

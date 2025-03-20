@@ -1,5 +1,4 @@
-import { db } from "../index";
-import { ClassCreateEntity, ClassUpdateEntity } from "@providers/db";
+import { db, ClassCreateEntity, ClassUpdateEntity } from "@providers/db";
 import { EntityNotFoundException } from "../exceptions/entity-not-found.exception";
 
 export class ClassesRepository {

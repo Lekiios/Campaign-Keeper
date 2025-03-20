@@ -1,5 +1,8 @@
-import { CharacterCreateEntity, CharacterUpdateEntity } from "@providers/db";
-import { db } from "../index";
+import {
+    db,
+    CharacterCreateEntity,
+    CharacterUpdateEntity,
+} from "@providers/db";
 import { EntityNotFoundException } from "../exceptions/entity-not-found.exception";
 import { EntityInternalErrorException } from "../exceptions/entity-internal-error.exception";
 
