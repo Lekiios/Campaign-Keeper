@@ -12,22 +12,12 @@ import {
     updateCharacterResponseSchema,
 } from "@schemas/characters.schema";
 import { ErrorResponseSchema } from "@schemas/common.schema";
-import { ClassesService } from "@services/classes.service";
-import { ClassesRepository } from "@repositories/classes.repository";
-import { UsersRepository } from "@repositories/users.repository";
-import { UsersService } from "@services/users.service";
 import { CharactersController } from "@controllers/characters.controller";
 import { CharactersService } from "@services/characters.service";
 import { CharactersRepository } from "@repositories/characters.repository";
 
 const charactersService = new CharactersService(new CharactersRepository());
-const classService = new ClassesService(new ClassesRepository());
-const usersService = new UsersService(new UsersRepository());
-const charactersController = new CharactersController(
-    charactersService,
-    classService,
-    usersService,
-);
+const charactersController = new CharactersController(charactersService);
 
 server.get(
     "/api/characters",
@@ -37,6 +27,7 @@ server.get(
             response: {
                 200: findAllCharactersResponseSchema,
                 404: ErrorResponseSchema,
+                500: ErrorResponseSchema,
             },
             tags: ["Characters"],
         },
@@ -55,6 +46,7 @@ server.post(
             response: {
                 201: createCharacterResponseSchema,
                 404: ErrorResponseSchema,
+                500: ErrorResponseSchema,
             },
             tags: ["Characters"],
         },
@@ -73,6 +65,7 @@ server.get(
             response: {
                 200: findCharacterByIdResponseSchema,
                 404: ErrorResponseSchema,
+                500: ErrorResponseSchema,
             },
             tags: ["Characters"],
         },
@@ -90,7 +83,7 @@ server.delete(
     {
         schema: {
             params: deleteCharacterParamsSchema,
-            response: { 204: {} },
+            response: { 204: {}, 404: ErrorResponseSchema },
             tags: ["Characters"],
         },
     },
@@ -109,6 +102,7 @@ server.patch(
             response: {
                 200: updateCharacterResponseSchema,
                 404: ErrorResponseSchema,
+                500: ErrorResponseSchema,
             },
             tags: ["Characters"],
         },

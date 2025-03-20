@@ -31,11 +31,11 @@ export class ItemsRepository {
             include: { stats: true },
         });
         if (!item) {
-            throw new EntityNotFoundException(`Item with id ${id} not found`);
+            throw new EntityNotFoundException(`Item with id ${id} not found.`);
         }
         if (!item.stats) {
             throw new EntityInternalErrorException(
-                `Stats of item with id ${id} not found`,
+                `Stats {id: ${item.statsId}} of item with id ${id} not found. Check the database.`,
             );
         }
 
@@ -52,7 +52,7 @@ export class ItemsRepository {
         });
 
         if (!item) {
-            throw new EntityNotFoundException(`Item with id ${id} not found`);
+            throw new EntityNotFoundException(`Item with id ${id} not found.`);
         }
 
         return item;
@@ -92,7 +92,7 @@ export class ItemsRepository {
             const findItem = await db.item.findUnique({ where: { id } });
             if (!findItem) {
                 throw new EntityNotFoundException(
-                    `Item with id ${id} not found`,
+                    `Item with id ${id} not found.`,
                 );
             }
         }
@@ -116,7 +116,7 @@ export class ItemsRepository {
         const item = await db.item.findUnique({ where: { id } });
 
         if (!item) {
-            throw new EntityNotFoundException(`Item with id ${id} not found`);
+            throw new EntityNotFoundException(`Item with id ${id} not found.`);
         }
 
         return db.item.delete({

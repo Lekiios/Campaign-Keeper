@@ -33,7 +33,7 @@ export class UsersRepository {
         });
 
         if (!user) {
-            throw new EntityNotFoundException(`User with id ${id} not found`);
+            throw new EntityNotFoundException(`User with id ${id} not found.`);
         }
 
         return user;
@@ -49,7 +49,7 @@ export class UsersRepository {
         });
 
         if (!findUser) {
-            throw new EntityNotFoundException(`User with id ${id} not found`);
+            throw new EntityNotFoundException(`User with id ${id} not found.`);
         }
 
         return db.user.delete({
@@ -68,7 +68,7 @@ export class UsersRepository {
         });
 
         if (!findUser) {
-            throw new EntityNotFoundException(`User with id ${id} not found`);
+            throw new EntityNotFoundException(`User with id ${id} not found.`);
         }
 
         return db.user.update({

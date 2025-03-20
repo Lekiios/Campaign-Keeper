@@ -12,16 +12,11 @@ import {
 } from "@schemas/characters.schema";
 import { ControllerResponse } from "@controllers/controllers";
 import { ErrorResponse } from "@schemas/common.schema";
-import { ClassesService } from "@services/classes.service";
-import { UsersService } from "@services/users.service";
-import { ClassEntity, UserEntity } from "@providers/db";
+import { EntityInternalErrorException } from "../exceptions/entity-internal-error.exception";
+import { EntityNotFoundException } from "../exceptions/entity-not-found.exception";
 
 export class CharactersController {
-    constructor(
-        private readonly charactersService: CharactersService,
-        private readonly classesService: ClassesService,
-        private readonly usersService: UsersService,
-    ) {}
+    constructor(private readonly charactersService: CharactersService) {}
 
     async createCharacter(
         body: CreateCharacterBody,
@@ -39,196 +34,183 @@ export class CharactersController {
             classId,
             stats,
         } = body;
-
-        // Check if class exists
-        const _class = await this.classesService.findById(classId);
-        if (!_class) {
-            return {
-                statusCode: 404,
-                body: {
-                    message: `Class with id ${classId} not found`,
-                },
-            };
-        }
-
-        // Check user exists
-        const user = await this.usersService.findById(userId);
-        if (!user) {
-            return {
-                statusCode: 404,
-                body: {
-                    message: `User with id ${userId} not found`,
-                },
-            };
-        }
-
-        const character = await this.charactersService.create({
-            name,
-            description: description ?? null,
-            level: level ?? 1,
-            userId,
-            inventorySize,
-            maxHp,
-            currentHp: maxHp,
-            money: money ?? 0,
-            xp: xp ?? 0,
-            requiredXp: requiredXp ?? 100,
-            classId,
-            stats,
-        });
-
-        return {
-            statusCode: 201,
-            body: {
-                ...character,
-                description: character.description ?? undefined,
-                class: {
-                    id: _class.id,
-                    name: _class.name,
-                    description: _class.description ?? undefined,
-                },
+        try {
+            const character = await this.charactersService.create({
+                name,
+                description: description ?? null,
+                level: level ?? 1,
+                userId,
+                inventorySize,
+                maxHp,
+                currentHp: maxHp,
+                money: money ?? 0,
+                xp: xp ?? 0,
+                requiredXp: requiredXp ?? 100,
+                classId,
                 stats,
-                user: { username: user.username, id: user.id },
-            },
-        };
+            });
+
+            const _class = await this.charactersService.findCharacterClassById(
+                character.classId,
+            );
+
+            const user = await this.charactersService.findCharacterUserById(
+                character.userId,
+            );
+
+            return {
+                statusCode: 201,
+                body: {
+                    ...character,
+                    description: character.description ?? undefined,
+                    class: {
+                        id: _class.id,
+                        name: _class.name,
+                        description: _class.description ?? undefined,
+                    },
+                    stats,
+                    user: { username: user.username, id: user.id },
+                },
+            };
+        } catch (error) {
+            if (error instanceof EntityNotFoundException) {
+                return {
+                    statusCode: 404,
+                    body: {
+                        message: error.message,
+                    },
+                };
+            } else if (error instanceof EntityInternalErrorException) {
+                return {
+                    statusCode: 500,
+                    body: {
+                        message: error.message,
+                    },
+                };
+            } else {
+                throw error;
+            }
+        }
     }
 
     async findAllCharacters(
         query: FindAllCharactersQuery,
     ): Promise<ControllerResponse<FindAllCharactersResponse | ErrorResponse>> {
         const { page, count, classId, userId } = query;
-
-        // Check if class exists
-        let _class: ClassEntity | null = null;
-        if (classId) {
-            _class = await this.classesService.findById(classId);
-            if (!_class) {
-                return {
-                    statusCode: 404,
-                    body: {
-                        message: `Class with id ${classId} not found`,
-                    },
-                };
-            }
-        }
-
-        // Check user exists
-        let user: UserEntity | null = null;
-        if (userId) {
-            user = await this.usersService.findById(userId);
-            if (!user) {
-                return {
-                    statusCode: 404,
-                    body: {
-                        message: `User with id ${userId} not found`,
-                    },
-                };
-            }
-        }
-
-        const characters = await this.charactersService.findAll(page, count, {
-            classId,
-            userId,
-        });
-
-        const res = characters.map(async (character) => {
-            const _class = await this.classesService.findById(
-                character.classId,
+        try {
+            const characters = await this.charactersService.findAll(
+                page,
+                count,
+                {
+                    classId,
+                    userId,
+                },
             );
-            if (!_class) {
-                throw new Error(
-                    "Internal Error - Something went wrong in classes entities!",
-                );
-            }
 
-            const user = await this.usersService.findById(character.userId);
-            if (!user) {
-                throw new Error(
-                    "Internal Error - Something went wrong in Users entities!",
+            const res = characters.map(async (character) => {
+                const _class =
+                    await this.charactersService.findCharacterClassById(
+                        character.classId,
+                    );
+                const user = await this.charactersService.findCharacterUserById(
+                    character.userId,
                 );
-            }
 
-            const stats = await this.charactersService.findCharacterStatById(
-                character.id,
-            );
-            if (!stats) {
-                throw new Error(
-                    "Internal Error - Something went wrong in Stats entities!",
-                );
-            }
+                const stats =
+                    await this.charactersService.findCharacterStatsById(
+                        character.id,
+                    );
+
+                return {
+                    ...character,
+                    description: character.description ?? undefined,
+                    class: {
+                        id: _class.id,
+                        name: _class.name,
+                        description: _class.description ?? undefined,
+                    },
+                    user: { id: user.id, username: user.username },
+                    statsId: undefined,
+                    stats,
+                };
+            });
 
             return {
-                ...character,
-                description: character.description ?? undefined,
-                class: {
-                    id: _class.id,
-                    name: _class.name,
-                    description: _class.description ?? undefined,
-                },
-                user: { id: user.id, username: user.username },
-                statsId: undefined,
-                stats,
+                statusCode: 200,
+                body: await Promise.all(res),
             };
-        });
-
-        return {
-            statusCode: 200,
-            body: await Promise.all(res),
-        };
+        } catch (error) {
+            if (error instanceof EntityNotFoundException) {
+                return {
+                    statusCode: 404,
+                    body: {
+                        message: error.message,
+                    },
+                };
+            } else if (error instanceof EntityInternalErrorException) {
+                return {
+                    statusCode: 500,
+                    body: {
+                        message: error.message,
+                    },
+                };
+            } else {
+                throw error;
+            }
+        }
     }
 
     async findCharacterById(
         params: FindCharacterByIdParams,
     ): Promise<ControllerResponse<FindCharacterByIdResponse | ErrorResponse>> {
         const { id } = params;
-        const character = await this.charactersService.findById(id);
+        try {
+            const character = await this.charactersService.findById(id);
 
-        if (!character) {
+            const _class = await this.charactersService.findCharacterClassById(
+                character.classId,
+            );
+            const user = await this.charactersService.findCharacterUserById(
+                character.userId,
+            );
+
+            const stats = await this.charactersService.findCharacterStatsById(
+                character.id,
+            );
+
             return {
-                statusCode: 404,
+                statusCode: 200,
                 body: {
-                    message: `Character with id ${id} not found`,
+                    ...character,
+                    description: character.description ?? undefined,
+                    class: {
+                        id: _class.id,
+                        name: _class.name,
+                        description: _class.description ?? undefined,
+                    },
+                    user: { id: user.id, username: user.username },
+                    stats,
                 },
             };
+        } catch (error) {
+            if (error instanceof EntityNotFoundException) {
+                return {
+                    statusCode: 404,
+                    body: {
+                        message: error.message,
+                    },
+                };
+            } else if (error instanceof EntityInternalErrorException) {
+                return {
+                    statusCode: 500,
+                    body: {
+                        message: error.message,
+                    },
+                };
+            } else {
+                throw error;
+            }
         }
-
-        const _class = await this.classesService.findById(character.classId);
-        if (!_class) {
-            throw new Error(
-                "Internal Error - Something went wrong in classes entities!",
-            );
-        }
-
-        const user = await this.usersService.findById(character.userId);
-        if (!user) {
-            throw new Error(
-                "Internal Error - Something went wrong in Users entities!",
-            );
-        }
-
-        const stats = await this.charactersService.findCharacterStatById(
-            character.id,
-        );
-        if (!stats) {
-            throw new Error(
-                "Internal Error - Something went wrong in Stats entities!",
-            );
-        }
-
-        return {
-            statusCode: 200,
-            body: {
-                ...character,
-                description: character.description ?? undefined,
-                class: {
-                    id: _class.id,
-                    name: _class.name,
-                    description: _class.description ?? undefined,
-                },
-                user: { id: user.id, username: user.username },
-                stats,
-            },
-        };
     }
 
     async updateCharacter(
@@ -250,34 +232,6 @@ export class CharactersController {
             userId,
         } = body;
 
-        // Check if class exists
-        let _class: ClassEntity | null = null;
-        if (classId) {
-            _class = await this.classesService.findById(classId);
-            if (!_class) {
-                return {
-                    statusCode: 404,
-                    body: {
-                        message: `Class with id ${classId} not found`,
-                    },
-                };
-            }
-        }
-
-        // Check user exists
-        let user: UserEntity | null = null;
-        if (userId) {
-            user = await this.usersService.findById(userId);
-            if (!user) {
-                return {
-                    statusCode: 404,
-                    body: {
-                        message: `User with id ${userId} not found`,
-                    },
-                };
-            }
-        }
-
         const updatedCharacter = await this.charactersService.update(id, {
             name,
             description,
@@ -296,32 +250,15 @@ export class CharactersController {
             return {
                 statusCode: 404,
                 body: {
-                    message: `Character with id ${id} not found`,
+                    message: `Character with id ${id} not found.`,
                 },
             };
         }
-
-        if (!_class) {
-            _class = await this.classesService.findById(
-                updatedCharacter.classId,
-            );
-            if (!_class) {
-                throw new Error(
-                    "Internal Error - Something went wrong in classes entities!",
-                );
-            }
-        }
-        if (!user) {
-            user = await this.usersService.findById(updatedCharacter.userId);
-            if (!user) {
-                throw new Error(
-                    "Internal Error - Something went wrong in Users entities!",
-                );
-            }
-        }
+        const _class = await this.charactersService.findCharacterClassById(id);
+        const user = await this.charactersService.findCharacterUserById(id);
 
         const updatedStats =
-            await this.charactersService.findCharacterStatById(id);
+            await this.charactersService.findCharacterStatsById(id);
 
         if (!updatedStats) {
             throw new Error(
@@ -347,13 +284,26 @@ export class CharactersController {
 
     async deleteCharacter(
         params: FindCharacterByIdParams,
-    ): Promise<ControllerResponse<undefined>> {
+    ): Promise<ControllerResponse<ErrorResponse | undefined>> {
         const { id } = params;
-        await this.charactersService.delete(id);
+        try {
+            await this.charactersService.delete(id);
 
-        return {
-            statusCode: 204,
-            body: undefined,
-        };
+            return {
+                statusCode: 204,
+                body: undefined,
+            };
+        } catch (error) {
+            if (error instanceof EntityNotFoundException) {
+                return {
+                    statusCode: 404,
+                    body: {
+                        message: error.message,
+                    },
+                };
+            } else {
+                throw error;
+            }
+        }
     }
 }

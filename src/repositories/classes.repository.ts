@@ -33,7 +33,7 @@ export class ClassesRepository {
         });
 
         if (!_class) {
-            throw new EntityNotFoundException(`Class with id ${id} not found`);
+            throw new EntityNotFoundException(`Class with id ${id} not found.`);
         }
         return _class;
     }
@@ -46,7 +46,7 @@ export class ClassesRepository {
         const _class = await db.class.findUnique({ where: { id } });
 
         if (!_class) {
-            throw new EntityNotFoundException(`Class with id ${id} not found`);
+            throw new EntityNotFoundException(`Class with id ${id} not found.`);
         }
 
         return db.class.delete({
@@ -63,7 +63,7 @@ export class ClassesRepository {
         const findClass = await db.class.findUnique({ where: { id } });
 
         if (!findClass) {
-            throw new EntityNotFoundException(`Class with id ${id} not found`);
+            throw new EntityNotFoundException(`Class with id ${id} not found.`);
         }
 
         return db.class.update({

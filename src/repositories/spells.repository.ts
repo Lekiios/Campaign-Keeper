@@ -71,7 +71,7 @@ export class SpellsRepository {
         });
 
         if (!spell) {
-            throw new EntityNotFoundException(`Spell with id ${id} not found`);
+            throw new EntityNotFoundException(`Spell with id ${id} not found.`);
         }
 
         return spell;
@@ -85,7 +85,7 @@ export class SpellsRepository {
         const findSpell = await db.spell.findUnique({ where: { id } });
 
         if (!findSpell) {
-            throw new EntityNotFoundException(`Spell with id ${id} not found`);
+            throw new EntityNotFoundException(`Spell with id ${id} not found.`);
         }
 
         return db.spell.delete({
@@ -102,7 +102,7 @@ export class SpellsRepository {
         const findSpell = await db.spell.findUnique({ where: { id } });
 
         if (!findSpell) {
-            throw new EntityNotFoundException(`Spell with id ${id} not found`);
+            throw new EntityNotFoundException(`Spell with id ${id} not found.`);
         }
 
         return db.spell.update({
@@ -124,12 +124,12 @@ export class SpellsRepository {
         });
 
         if (!spell) {
-            throw new EntityNotFoundException(`Spell with id ${id} not found`);
+            throw new EntityNotFoundException(`Spell with id ${id} not found.`);
         }
 
         if (!spell.class) {
             throw new EntityInternalErrorException(
-                `Class of spell with id ${id} not found`,
+                `Class {id: ${spell.classId}} of spell with id ${id} not found. Check the database.`,
             );
         }
 
