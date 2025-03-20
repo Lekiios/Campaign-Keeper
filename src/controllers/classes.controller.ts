@@ -57,16 +57,8 @@ export class ClassesController {
         params: FindClassByIdParams,
     ): Promise<ControllerResponse<FindClassByIdResponse | ErrorResponse>> {
         const { id } = params;
-        const _class = await this.classService.findById(id);
 
-        if (!_class) {
-            return {
-                statusCode: 404,
-                body: {
-                    message: `Class with id ${id} not found`,
-                },
-            };
-        }
+        const _class = await this.classService.findById(id);
 
         return {
             statusCode: 200,
@@ -80,7 +72,7 @@ export class ClassesController {
 
     async deleteClassById(
         params: DeleteClassParams,
-    ): Promise<ControllerResponse<undefined>> {
+    ): Promise<ControllerResponse<ErrorResponse | undefined>> {
         const { id } = params;
         await this.classService.delete(id);
         return {
@@ -100,15 +92,6 @@ export class ClassesController {
             name,
             description,
         });
-
-        if (!updatedClass) {
-            return {
-                statusCode: 404,
-                body: {
-                    message: `Class with id ${id} not found`,
-                },
-            };
-        }
 
         return {
             statusCode: 200,

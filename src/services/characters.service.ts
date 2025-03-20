@@ -53,10 +53,25 @@ export class CharactersService {
 
     /**
      * Get the stats of a character
-     * @param id id of the character
+     * @param id id of the character to get the stats from
      */
-    async findCharacterStatById(id: number) {
-        const res = this.charactersRepository.findCharacterStatsById(id);
-        return res.stats();
+    async findCharacterStatsById(id: number) {
+        return this.charactersRepository.findCharacterStatsById(id);
+    }
+
+    /**
+     * Get the class of a character
+     * @param id id of the character to get the class from
+     */
+    async findCharacterClassById(id: number) {
+        return this.charactersRepository.findCharacterClassById(id);
+    }
+
+    /**
+     * Get the user of a character
+     * @param id id of the character to get the user from
+     */
+    async findCharacterUserById(id: number) {
+        return this.charactersRepository.findCharacterUserById(id);
     }
 }

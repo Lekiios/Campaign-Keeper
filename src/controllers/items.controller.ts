@@ -48,24 +48,10 @@ export class ItemsController {
         params: FindItemByIdParams,
     ): Promise<ControllerResponse<FindItemByIdResponse | ErrorResponse>> {
         const { id } = params;
+
         const item = await this.itemsService.findById(id);
 
-        if (!item) {
-            return {
-                statusCode: 404,
-                body: {
-                    message: `Item with id ${id} not found`,
-                },
-            };
-        }
-
         const stats = await this.itemsService.findItemStatsById(id);
-
-        if (!stats) {
-            throw new Error(
-                "Internal Error - Something went wrong in items' stats entities :(",
-            );
-        }
 
         return {
             statusCode: 200,
@@ -123,20 +109,7 @@ export class ItemsController {
             stats,
         });
 
-        if (!updatedItem) {
-            return {
-                statusCode: 404,
-                body: { message: `Item with id ${id} not found` },
-            };
-        }
-
         const itemStats = await this.itemsService.findItemStatsById(id);
-
-        if (!itemStats) {
-            throw new Error(
-                "Internal Error - Something went wrong in items' stats entities :(",
-            );
-        }
 
         return {
             statusCode: 200,
@@ -153,8 +126,9 @@ export class ItemsController {
 
     async deleteItemById(
         params: DeleteItemParams,
-    ): Promise<ControllerResponse<undefined>> {
+    ): Promise<ControllerResponse<ErrorResponse | undefined>> {
         const { id } = params;
+
         await this.itemsService.delete(id);
         return {
             statusCode: 204,

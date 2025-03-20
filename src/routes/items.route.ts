@@ -78,6 +78,7 @@ server.patch(
             response: {
                 200: updateItemResponseSchema,
                 404: ErrorResponseSchema,
+                500: ErrorResponseSchema,
             },
             tags: ["Items"],
         },
@@ -96,7 +97,7 @@ server.delete(
     {
         schema: {
             params: deleteItemParamsSchema,
-            response: { 204: {} },
+            response: { 204: {}, 404: ErrorResponseSchema },
             tags: ["Items"],
         },
     },

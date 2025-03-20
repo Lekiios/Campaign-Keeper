@@ -51,4 +51,12 @@ export class SpellsService {
     async update(id: number, spell: SpellUpdateEntity) {
         return this.spellsRepository.update(id, spell);
     }
+
+    /**
+     * Get the spell class from the database
+     * @param id id of the spell to get the class from
+     */
+    async getSpellClass(id: number) {
+        return this.spellsRepository.findSpellClassById(id);
+    }
 }

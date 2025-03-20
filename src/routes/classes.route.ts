@@ -70,7 +70,7 @@ server.delete(
     {
         schema: {
             params: deleteClassParamsSchema,
-            response: { 204: {} },
+            response: { 204: {}, 404: ErrorResponseSchema },
             tags: ["Classes"],
         },
     },

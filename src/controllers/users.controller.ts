@@ -65,16 +65,8 @@ export class UsersController {
         params: FindUserByIdParams,
     ): Promise<ControllerResponse<FindUserByIdResponse | ErrorResponse>> {
         const { id } = params;
-        const user = await this.userService.findById(id);
 
-        if (!user) {
-            return {
-                statusCode: 404,
-                body: {
-                    message: `User with id ${id} not found`,
-                },
-            };
-        }
+        const user = await this.userService.findById(id);
 
         return {
             statusCode: 200,
@@ -90,8 +82,9 @@ export class UsersController {
 
     async deleteUserById(
         params: DeleteUserParams,
-    ): Promise<ControllerResponse<undefined>> {
+    ): Promise<ControllerResponse<ErrorResponse | undefined>> {
         const { id } = params;
+
         await this.userService.delete(id);
         return {
             statusCode: 204,
@@ -112,15 +105,6 @@ export class UsersController {
             password,
             profilePicture: profilePicture,
         });
-
-        if (!updatedUser) {
-            return {
-                statusCode: 404,
-                body: {
-                    message: `User with id ${id} not found`,
-                },
-            };
-        }
 
         return {
             statusCode: 200,

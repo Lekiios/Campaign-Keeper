@@ -72,13 +72,13 @@ server.delete(
     {
         schema: {
             params: deleteUserParamsSchema,
-            response: { 204: {} },
+            response: { 204: {}, 404: ErrorResponseSchema },
             tags: ["Users"],
         },
     },
     async (request, reply) => {
         const res = await userController.deleteUserById(request.params);
-        return reply.code(res.statusCode).send();
+        return reply.code(res.statusCode).send(res.body);
     },
 );
 

@@ -12,16 +12,9 @@ import {
 } from "@schemas/characters.schema";
 import { ControllerResponse } from "@controllers/controllers";
 import { ErrorResponse } from "@schemas/common.schema";
-import { ClassesService } from "@services/classes.service";
-import { UsersService } from "@services/users.service";
-import { ClassEntity, UserEntity } from "@providers/db";
 
 export class CharactersController {
-    constructor(
-        private readonly charactersService: CharactersService,
-        private readonly classesService: ClassesService,
-        private readonly usersService: UsersService,
-    ) {}
+    constructor(private readonly charactersService: CharactersService) {}
 
     async createCharacter(
         body: CreateCharacterBody,
@@ -40,28 +33,6 @@ export class CharactersController {
             stats,
         } = body;
 
-        // Check if class exists
-        const _class = await this.classesService.findById(classId);
-        if (!_class) {
-            return {
-                statusCode: 404,
-                body: {
-                    message: `Class with id ${classId} not found`,
-                },
-            };
-        }
-
-        // Check user exists
-        const user = await this.usersService.findById(userId);
-        if (!user) {
-            return {
-                statusCode: 404,
-                body: {
-                    message: `User with id ${userId} not found`,
-                },
-            };
-        }
-
         const character = await this.charactersService.create({
             name,
             description: description ?? null,
@@ -76,6 +47,14 @@ export class CharactersController {
             classId,
             stats,
         });
+
+        const _class = await this.charactersService.findCharacterClassById(
+            character.id,
+        );
+
+        const user = await this.charactersService.findCharacterUserById(
+            character.id,
+        );
 
         return {
             statusCode: 201,
@@ -97,65 +76,22 @@ export class CharactersController {
         query: FindAllCharactersQuery,
     ): Promise<ControllerResponse<FindAllCharactersResponse | ErrorResponse>> {
         const { page, count, classId, userId } = query;
-
-        // Check if class exists
-        let _class: ClassEntity | null = null;
-        if (classId) {
-            _class = await this.classesService.findById(classId);
-            if (!_class) {
-                return {
-                    statusCode: 404,
-                    body: {
-                        message: `Class with id ${classId} not found`,
-                    },
-                };
-            }
-        }
-
-        // Check user exists
-        let user: UserEntity | null = null;
-        if (userId) {
-            user = await this.usersService.findById(userId);
-            if (!user) {
-                return {
-                    statusCode: 404,
-                    body: {
-                        message: `User with id ${userId} not found`,
-                    },
-                };
-            }
-        }
-
         const characters = await this.charactersService.findAll(page, count, {
             classId,
             userId,
         });
 
         const res = characters.map(async (character) => {
-            const _class = await this.classesService.findById(
-                character.classId,
-            );
-            if (!_class) {
-                throw new Error(
-                    "Internal Error - Something went wrong in classes entities!",
-                );
-            }
-
-            const user = await this.usersService.findById(character.userId);
-            if (!user) {
-                throw new Error(
-                    "Internal Error - Something went wrong in Users entities!",
-                );
-            }
-
-            const stats = await this.charactersService.findCharacterStatById(
+            const _class = await this.charactersService.findCharacterClassById(
                 character.id,
             );
-            if (!stats) {
-                throw new Error(
-                    "Internal Error - Something went wrong in Stats entities!",
-                );
-            }
+            const user = await this.charactersService.findCharacterUserById(
+                character.id,
+            );
+
+            const stats = await this.charactersService.findCharacterStatsById(
+                character.id,
+            );
 
             return {
                 ...character,
@@ -181,39 +117,13 @@ export class CharactersController {
         params: FindCharacterByIdParams,
     ): Promise<ControllerResponse<FindCharacterByIdResponse | ErrorResponse>> {
         const { id } = params;
+
         const character = await this.charactersService.findById(id);
 
-        if (!character) {
-            return {
-                statusCode: 404,
-                body: {
-                    message: `Character with id ${id} not found`,
-                },
-            };
-        }
+        const _class = await this.charactersService.findCharacterClassById(id);
+        const user = await this.charactersService.findCharacterUserById(id);
 
-        const _class = await this.classesService.findById(character.classId);
-        if (!_class) {
-            throw new Error(
-                "Internal Error - Something went wrong in classes entities!",
-            );
-        }
-
-        const user = await this.usersService.findById(character.userId);
-        if (!user) {
-            throw new Error(
-                "Internal Error - Something went wrong in Users entities!",
-            );
-        }
-
-        const stats = await this.charactersService.findCharacterStatById(
-            character.id,
-        );
-        if (!stats) {
-            throw new Error(
-                "Internal Error - Something went wrong in Stats entities!",
-            );
-        }
+        const stats = await this.charactersService.findCharacterStatsById(id);
 
         return {
             statusCode: 200,
@@ -250,34 +160,6 @@ export class CharactersController {
             userId,
         } = body;
 
-        // Check if class exists
-        let _class: ClassEntity | null = null;
-        if (classId) {
-            _class = await this.classesService.findById(classId);
-            if (!_class) {
-                return {
-                    statusCode: 404,
-                    body: {
-                        message: `Class with id ${classId} not found`,
-                    },
-                };
-            }
-        }
-
-        // Check user exists
-        let user: UserEntity | null = null;
-        if (userId) {
-            user = await this.usersService.findById(userId);
-            if (!user) {
-                return {
-                    statusCode: 404,
-                    body: {
-                        message: `User with id ${userId} not found`,
-                    },
-                };
-            }
-        }
-
         const updatedCharacter = await this.charactersService.update(id, {
             name,
             description,
@@ -296,32 +178,15 @@ export class CharactersController {
             return {
                 statusCode: 404,
                 body: {
-                    message: `Character with id ${id} not found`,
+                    message: `Character with id ${id} not found.`,
                 },
             };
         }
-
-        if (!_class) {
-            _class = await this.classesService.findById(
-                updatedCharacter.classId,
-            );
-            if (!_class) {
-                throw new Error(
-                    "Internal Error - Something went wrong in classes entities!",
-                );
-            }
-        }
-        if (!user) {
-            user = await this.usersService.findById(updatedCharacter.userId);
-            if (!user) {
-                throw new Error(
-                    "Internal Error - Something went wrong in Users entities!",
-                );
-            }
-        }
+        const _class = await this.charactersService.findCharacterClassById(id);
+        const user = await this.charactersService.findCharacterUserById(id);
 
         const updatedStats =
-            await this.charactersService.findCharacterStatById(id);
+            await this.charactersService.findCharacterStatsById(id);
 
         if (!updatedStats) {
             throw new Error(
@@ -347,8 +212,9 @@ export class CharactersController {
 
     async deleteCharacter(
         params: FindCharacterByIdParams,
-    ): Promise<ControllerResponse<undefined>> {
+    ): Promise<ControllerResponse<ErrorResponse | undefined>> {
         const { id } = params;
+
         await this.charactersService.delete(id);
 
         return {

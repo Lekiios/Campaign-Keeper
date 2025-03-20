@@ -14,32 +14,14 @@ import {
     UpdateSpellParams,
     UpdateSpellResponse,
 } from "@schemas/spells.schema";
-import { ClassesService } from "@services/classes.service";
-import { ClassEntity } from "@providers/db";
 
 export class SpellsController {
-    constructor(
-        private readonly spellService: SpellsService,
-        private readonly classService: ClassesService,
-    ) {}
+    constructor(private readonly spellService: SpellsService) {}
 
     async createSpell(
         body: CreateSpellBody,
     ): Promise<ControllerResponse<CreateSpellResponse | ErrorResponse>> {
         const { name, description, type, requiredLevel, classId } = body;
-
-        let _class: ClassEntity | null = null;
-        if (classId !== undefined) {
-            _class = await this.classService.findById(classId);
-            if (!_class) {
-                return {
-                    statusCode: 404,
-                    body: {
-                        message: `Class with id ${classId} not found`,
-                    },
-                };
-            }
-        }
 
         const spell = await this.spellService.create({
             name,
@@ -48,6 +30,10 @@ export class SpellsController {
             requiredLevel: requiredLevel ?? null,
             classId: classId ?? null,
         });
+
+        const _class = classId
+            ? await this.spellService.getSpellClass(spell.id)
+            : undefined;
 
         return {
             statusCode: 201,
@@ -73,19 +59,6 @@ export class SpellsController {
     ): Promise<ControllerResponse<FindAllSpellsResponse | ErrorResponse>> {
         const { page, count } = query;
 
-        let _class: ClassEntity | null = null;
-        if (query.classId) {
-            _class = await this.classService.findById(query.classId);
-            if (!_class) {
-                return {
-                    statusCode: 404,
-                    body: {
-                        message: `Class with id ${query.classId} not found`,
-                    },
-                };
-            }
-        }
-
         const filter = { classId: query?.classId, type: query?.type };
         const spells = await this.spellService.findAll(page, count, filter);
 
@@ -101,12 +74,7 @@ export class SpellsController {
                     };
                 }
 
-                const _class = await this.classService.findById(classId);
-                if (!_class) {
-                    throw new Error(
-                        "Internal Error - Something went wrong in classes entities!",
-                    );
-                }
+                const _class = await this.spellService.getSpellClass(id);
 
                 return {
                     id,
@@ -133,16 +101,8 @@ export class SpellsController {
         params: FindSpellByIdParams,
     ): Promise<ControllerResponse<FindSpellByIdResponse | ErrorResponse>> {
         const { id } = params;
-        const spell = await this.spellService.findById(id);
 
-        if (!spell) {
-            return {
-                statusCode: 404,
-                body: {
-                    message: `Spell with id ${id} not found`,
-                },
-            };
-        }
+        const spell = await this.spellService.findById(id);
 
         if (!spell.classId) {
             return {
@@ -157,13 +117,7 @@ export class SpellsController {
             };
         }
 
-        const _class = await this.classService.findById(spell.classId);
-
-        if (!_class) {
-            throw new Error(
-                "Internal Error - Something went wrong in classes entities!",
-            );
-        }
+        const _class = await this.spellService.getSpellClass(spell.id);
 
         return {
             statusCode: 200,
@@ -184,7 +138,7 @@ export class SpellsController {
 
     async deleteSpellById(
         params: DeleteSpellParams,
-    ): Promise<ControllerResponse<undefined>> {
+    ): Promise<ControllerResponse<ErrorResponse | undefined>> {
         const { id } = params;
         await this.spellService.delete(id);
         return {
@@ -200,19 +154,6 @@ export class SpellsController {
         const { id } = params;
         const { name, description, classId, requiredLevel, type } = body;
 
-        let _class: ClassEntity | null = null;
-        if (classId !== undefined) {
-            _class = await this.classService.findById(classId);
-            if (!_class) {
-                return {
-                    statusCode: 404,
-                    body: {
-                        message: `Class with id ${classId} not found`,
-                    },
-                };
-            }
-        }
-
         const updatedSpell = await this.spellService.update(id, {
             name,
             description,
@@ -220,15 +161,6 @@ export class SpellsController {
             requiredLevel,
             classId,
         });
-
-        if (!updatedSpell) {
-            return {
-                statusCode: 404,
-                body: {
-                    message: `Spell with id ${id} not found`,
-                },
-            };
-        }
 
         if (!updatedSpell.classId) {
             return {
@@ -243,9 +175,7 @@ export class SpellsController {
             };
         }
 
-        if (!_class) {
-            _class = await this.classService.findById(updatedSpell.classId);
-        }
+        const _class = await this.spellService.getSpellClass(updatedSpell.id);
 
         return {
             statusCode: 200,

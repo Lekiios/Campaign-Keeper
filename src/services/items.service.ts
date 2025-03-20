@@ -31,11 +31,10 @@ export class ItemsService {
 
     /**
      * Find all stats of an item with its ID
-     * @param id
+     * @param id id of the item to get the stats from
      */
     async findItemStatsById(id: number) {
-        const res = this.itemsRepository.findItemStatsById(id);
-        return res.stats();
+        return this.itemsRepository.findItemStatsById(id);
     }
 
     /**
