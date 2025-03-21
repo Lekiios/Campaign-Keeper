@@ -1,16 +1,17 @@
-import { db, SpellCreateEntity, SpellUpdateEntity } from "@providers/db";
-import { SpellType } from "@prisma/client";
+import { SpellCreateEntity, SpellUpdateEntity } from "@providers/db";
+import { PrismaClient, SpellType } from "@prisma/client";
 import { EntityNotFoundException } from "../exceptions/entity-not-found.exception";
 import { EntityInternalErrorException } from "../exceptions/entity-internal-error.exception";
 
 export class SpellsRepository {
+    constructor(private readonly db: PrismaClient) {}
     /**
      * Create a spell in the database
      * @param spell Object that contains the spell data
      */
     async create(spell: SpellCreateEntity) {
         if (spell.classId) {
-            const classExists = await db.class.findUnique({
+            const classExists = await this.db.class.findUnique({
                 where: { id: spell.classId },
             });
 
@@ -22,7 +23,7 @@ export class SpellsRepository {
         }
         // Set requiredLevel to undefined if it is not provided to handle default value
         const { requiredLevel } = spell;
-        return db.spell.create({
+        return this.db.spell.create({
             data: { ...spell, requiredLevel: requiredLevel ?? undefined },
         });
     }
@@ -39,7 +40,7 @@ export class SpellsRepository {
         filter?: { classId?: number; type?: SpellType },
     ) {
         if (filter?.classId) {
-            const classExists = await db.class.findUnique({
+            const classExists = await this.db.class.findUnique({
                 where: { id: filter.classId },
             });
 
@@ -50,7 +51,7 @@ export class SpellsRepository {
             }
         }
 
-        return db.spell.findMany({
+        return this.db.spell.findMany({
             skip: page * count,
             take: count,
             where: {
@@ -65,7 +66,7 @@ export class SpellsRepository {
      * @param id id of the spell to read
      */
     async findById(id: number) {
-        const spell = await db.spell.findUnique({
+        const spell = await this.db.spell.findUnique({
             where: { id },
         });
 
@@ -81,13 +82,13 @@ export class SpellsRepository {
      * @param id id of the spell to delete
      */
     async delete(id: number) {
-        const findSpell = await db.spell.findUnique({ where: { id } });
+        const findSpell = await this.db.spell.findUnique({ where: { id } });
 
         if (!findSpell) {
             throw new EntityNotFoundException(`Spell with id ${id} not found.`);
         }
 
-        return db.spell.delete({
+        return this.db.spell.delete({
             where: { id },
         });
     }
@@ -98,13 +99,13 @@ export class SpellsRepository {
      * @param spell
      */
     async update(id: number, spell: SpellUpdateEntity) {
-        const findSpell = await db.spell.findUnique({ where: { id } });
+        const findSpell = await this.db.spell.findUnique({ where: { id } });
 
         if (!findSpell) {
             throw new EntityNotFoundException(`Spell with id ${id} not found.`);
         }
 
-        return db.spell.update({
+        return this.db.spell.update({
             where: { id },
             data: spell,
         });
@@ -115,7 +116,7 @@ export class SpellsRepository {
      * @param id id of the spell to get the class from
      */
     async findSpellClassById(id: number) {
-        const spell = await db.spell.findUnique({
+        const spell = await this.db.spell.findUnique({
             where: { id },
             include: {
                 class: true,
