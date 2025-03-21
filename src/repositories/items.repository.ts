@@ -1,16 +1,18 @@
-import { db, ItemCreateEntity, ItemUpdateEntity } from "@providers/db";
+import { ItemCreateEntity, ItemUpdateEntity } from "@providers/db";
 import { EntityNotFoundException } from "../exceptions/entity-not-found.exception";
 import { EntityInternalErrorException } from "../exceptions/entity-internal-error.exception";
+import { PrismaClient } from "@prisma/client";
 
 export class ItemsRepository {
+    constructor(private readonly db: PrismaClient) {}
     /**
      * * Create an item in the database
      * @param item Object that contains the item data
      */
     async create(item: ItemCreateEntity) {
-        const stats = await db.stats.create({ data: item.stats });
+        const stats = await this.db.stats.create({ data: item.stats });
         const { requiredLevel } = item;
-        return db.item.create({
+        return this.db.item.create({
             data: {
                 ...item,
                 requiredLevel: requiredLevel ?? undefined,
@@ -25,7 +27,7 @@ export class ItemsRepository {
      * @param id id of the item to get the stats from
      */
     async findItemStatsById(id: number) {
-        const item = await db.item.findUnique({
+        const item = await this.db.item.findUnique({
             where: { id },
             include: { stats: true },
         });
@@ -46,7 +48,7 @@ export class ItemsRepository {
      * @param id
      */
     async findById(id: number) {
-        const item = await db.item.findUnique({
+        const item = await this.db.item.findUnique({
             where: { id },
         });
 
@@ -63,7 +65,7 @@ export class ItemsRepository {
      * @param [count=10] number of items to read
      */
     async findAll(page: number = 0, count: number = 10) {
-        return db.item.findMany({
+        return this.db.item.findMany({
             skip: page * count,
             take: count,
             include: {
@@ -82,13 +84,13 @@ export class ItemsRepository {
             // Find the stats of the item & will check if the item exists
             const stats = await this.findItemStatsById(id);
 
-            await db.stats.update({
+            await this.db.stats.update({
                 where: { id: stats.id },
                 data: item.stats,
             });
         } else {
             // Check if the item exists if not done by findItemStatsById
-            const findItem = await db.item.findUnique({ where: { id } });
+            const findItem = await this.db.item.findUnique({ where: { id } });
             if (!findItem) {
                 throw new EntityNotFoundException(
                     `Item with id ${id} not found.`,
@@ -96,7 +98,7 @@ export class ItemsRepository {
             }
         }
 
-        return db.item.update({
+        return this.db.item.update({
             where: { id },
             data: {
                 name: item.name,
@@ -112,13 +114,13 @@ export class ItemsRepository {
      * @param id id of the item to delete
      */
     async delete(id: number) {
-        const item = await db.item.findUnique({ where: { id } });
+        const item = await this.db.item.findUnique({ where: { id } });
 
         if (!item) {
             throw new EntityNotFoundException(`Item with id ${id} not found.`);
         }
 
-        return db.item.delete({
+        return this.db.item.delete({
             where: { id },
             include: { stats: true },
         });

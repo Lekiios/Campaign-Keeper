@@ -1,13 +1,16 @@
-import { db, UserCreateEntity, UserUpdateEntity } from "@providers/db";
+import { UserCreateEntity, UserUpdateEntity } from "@providers/db";
 import { EntityNotFoundException } from "../exceptions/entity-not-found.exception";
+import { PrismaClient } from "@prisma/client";
 
 export class UsersRepository {
+    constructor(private readonly db: PrismaClient) {}
+
     /**
      * Create a user in the database
      * @param player Object that contains the player data
      */
     async create(player: UserCreateEntity) {
-        return db.user.create({ data: player });
+        return this.db.user.create({ data: player });
     }
 
     /**
@@ -16,7 +19,7 @@ export class UsersRepository {
      * @param [count=10] number of players to read
      */
     async findAll(page: number = 0, count: number = 10) {
-        return db.user.findMany({
+        return this.db.user.findMany({
             skip: page * count,
             take: count,
         });
@@ -27,7 +30,7 @@ export class UsersRepository {
      * @param id id of the user to read
      */
     async findById(id: number) {
-        const user = await db.user.findUnique({
+        const user = await this.db.user.findUnique({
             where: { id },
         });
 
@@ -43,7 +46,7 @@ export class UsersRepository {
      * @param id id of the user to delete
      */
     async delete(id: number) {
-        const findUser = await db.user.findUnique({
+        const findUser = await this.db.user.findUnique({
             where: { id },
         });
 
@@ -51,7 +54,7 @@ export class UsersRepository {
             throw new EntityNotFoundException(`User with id ${id} not found.`);
         }
 
-        return db.user.delete({
+        return this.db.user.delete({
             where: { id },
         });
     }
@@ -62,7 +65,7 @@ export class UsersRepository {
      * @param user
      */
     async update(id: number, user: UserUpdateEntity) {
-        const findUser = await db.user.findUnique({
+        const findUser = await this.db.user.findUnique({
             where: { id },
         });
 
@@ -70,7 +73,7 @@ export class UsersRepository {
             throw new EntityNotFoundException(`User with id ${id} not found.`);
         }
 
-        return db.user.update({
+        return this.db.user.update({
             where: { id },
             data: user,
         });
