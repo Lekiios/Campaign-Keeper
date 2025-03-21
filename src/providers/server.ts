@@ -33,6 +33,10 @@ export const configurePlugins = async () => {
                     name: "Characters",
                     description: "Characters routes",
                 },
+                {
+                    name: "Campaigns",
+                    description: "Campaigns routes",
+                },
             ],
         },
     });
