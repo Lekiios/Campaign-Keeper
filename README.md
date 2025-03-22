@@ -26,14 +26,24 @@ cd <repository-directory>
 Create a `.env` file in the root directory of the project with the following variables:
 
 ```dotenv
+# For docker container
+
 POSTGRES_DB_USER=your_db_user
 POSTGRES_DB_ROOT_PASSWORD=your_db_password
 POSTGRES_DB_DATABASE=your_db_name
 POSTGRES_DB_LOCAL_PORT=your_local_db_port
 POSTGRES_DB_DOCKER_PORT=your_docker_db_port
+SERVER_LOCAL_HOST=your_local_server_host
 SERVER_LOCAL_PORT=your_local_server_port
 SERVER_DOCKER_PORT=your_docker_server_port
 SERVER_DOCKER_HOST=your_server_host
+
+# For local development
+
+SERVER_HOST=${SERVER_LOCAL_HOST}
+SERVER_PORT=${SERVER_LOCAL_PORT}
+
+DATABASE_URL="postgresql://${POSTGRES_DB_USER}:${POSTGRES_DB_ROOT_PASSWORD}@localhost:${POSTGRES_DB_LOCAL_PORT}/${POSTGRES_DB_DATABASE}"
 ```
 
 ### 3. Build and Run the Project with Docker Compose
