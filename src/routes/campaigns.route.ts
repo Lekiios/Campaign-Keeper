@@ -15,6 +15,7 @@ import {
     findCampaignByIdParamsSchema,
     findCampaignSummaryByIdResponseSchema,
     findCampaignCharactersResponseSchema,
+    campaignCharacterParamsSchema,
 } from "@schemas/campaigns.schema";
 import { ErrorResponseSchema } from "@schemas/common.schema";
 
@@ -131,6 +132,46 @@ server.delete(
     },
     async (request, reply) => {
         const response = await campaignsController.deleteCampaign(
+            request.params,
+        );
+        return reply.status(response.statusCode).send(response.body);
+    },
+);
+
+server.put(
+    "/api/campaigns/:campaignId/character/:characterId/add",
+    {
+        schema: {
+            params: campaignCharacterParamsSchema,
+            response: {
+                204: { type: "null" },
+                500: ErrorResponseSchema,
+            },
+            tags: ["Campaigns"],
+        },
+    },
+    async (request, reply) => {
+        const response = await campaignsController.addCharacterToCampaign(
+            request.params,
+        );
+        return reply.status(response.statusCode).send(response.body);
+    },
+);
+
+server.put(
+    "/api/campaigns/:campaignId/character/:characterId/remove",
+    {
+        schema: {
+            params: campaignCharacterParamsSchema,
+            response: {
+                204: { type: "null" },
+                500: ErrorResponseSchema,
+            },
+            tags: ["Campaigns"],
+        },
+    },
+    async (request, reply) => {
+        const response = await campaignsController.deleteCharacterToCampaign(
             request.params,
         );
         return reply.status(response.statusCode).send(response.body);

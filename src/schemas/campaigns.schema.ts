@@ -99,6 +99,15 @@ export type UpdateCampaignResponse = Static<
     typeof updateCampaignResponseSchema
 >;
 
+export const campaignCharacterParamsSchema = t.Object({
+    campaignId: t.Number(),
+    characterId: t.Number(),
+});
+
+export type CampaignCharacterParams = Static<
+    typeof campaignCharacterParamsSchema
+>;
+
 // =============================
 // DELETE
 // =============================

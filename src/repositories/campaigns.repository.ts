@@ -116,4 +116,32 @@ export class CampaignsRepository {
 
         return db.campaign.delete({ where: { id } });
     }
+
+    /**
+     * Add a character to a campaign
+     * @param characterId id of the character to add in the campaign
+     * @param campaignId id of the campaign
+     */
+    async addCharacterToCampaign(campaignId: number, characterId: number) {
+        await db.campaignCharacter.create({
+            data: {
+                campaignId,
+                characterId,
+            },
+        });
+    }
+
+    /**
+     * delete a character to a campaign
+     * @param characterId id of the character to delete in the campaign
+     * @param campaignId id of the campaign
+     */
+    async deleteCharacterToCampaign(campaignId: number, characterId: number) {
+        await db.campaignCharacter.deleteMany({
+            where: {
+                campaignId,
+                characterId,
+            },
+        });
+    }
 }

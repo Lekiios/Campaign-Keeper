@@ -12,6 +12,7 @@ import {
     FindCampaignByIdParams,
     FindCampaignCharactersResponse,
     FindCampaignSummaryByIdResponse,
+    CampaignCharacterParams,
 } from "@schemas/campaigns.schema";
 import { ErrorResponse } from "@schemas/common.schema";
 
@@ -140,5 +141,45 @@ export class CampaignsController {
             statusCode: 204,
             body: undefined,
         };
+    }
+
+    async addCharacterToCampaign(
+        params: CampaignCharacterParams,
+    ): Promise<ControllerResponse<undefined | ErrorResponse>> {
+        try {
+            await this.campaignsService.addCharacterToCampaign(
+                params.campaignId,
+                params.characterId,
+            );
+            return {
+                statusCode: 204,
+                body: undefined,
+            };
+        } catch (error) {
+            return {
+                statusCode: 500,
+                body: { message: "Failed to add character to campaign" },
+            };
+        }
+    }
+
+    async deleteCharacterToCampaign(
+        params: CampaignCharacterParams,
+    ): Promise<ControllerResponse<undefined | ErrorResponse>> {
+        try {
+            await this.campaignsService.deleteCharacterToCampaign(
+                params.campaignId,
+                params.characterId,
+            );
+            return {
+                statusCode: 204,
+                body: undefined,
+            };
+        } catch (error) {
+            return {
+                statusCode: 500,
+                body: { message: "Failed to remove character from campaign" },
+            };
+        }
     }
 }
