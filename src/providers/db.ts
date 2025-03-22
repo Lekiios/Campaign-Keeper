@@ -6,6 +6,7 @@ import {
     Character,
     Stats,
     Item,
+    Campaign,
 } from "@prisma/client";
 
 export const createDbClient = () => {
@@ -44,3 +45,6 @@ export type CharacterPartialAllStatsEntity = Omit<Character, "statsId"> & {
     stats: Partial<Omit<Stats, "id">>;
 };
 export type CharacterUpdateEntity = Partial<CharacterPartialAllStatsEntity>;
+
+export type CampaignCreateEntity = Omit<Campaign, "id">;
+export type CampaignUpdateEntity = Partial<CampaignCreateEntity>;

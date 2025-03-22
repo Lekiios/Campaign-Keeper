@@ -45,6 +45,10 @@ export const configureServer = async () => {
                     name: "Characters",
                     description: "Characters routes",
                 },
+                {
+                    name: "Campaigns",
+                    description: "Campaigns routes",
+                },
             ],
         },
     });
