@@ -1,5 +1,6 @@
 import { db } from "@providers/db";
 import { CampaignCreateEntity, CampaignUpdateEntity } from "@providers/db";
+import { EntityNotFoundException } from "../exceptions/entity-not-found.exception";
 
 export class CampaignsRepository {
     /**
@@ -24,14 +25,18 @@ export class CampaignsRepository {
 
     /**
      * Find a specific campaign with its ID
-     * @param id
+     * @param id id of the campaign to find characters from
      */
     async findCharactersById(id: number) {
         const campaign = await db.campaign.findUnique({
             where: { id },
         });
 
-        if (!campaign) return null;
+        if (!campaign) {
+            throw new EntityNotFoundException(
+                `Campaign with id ${id} not found.`,
+            );
+        }
 
         const links = await db.campaignCharacter.findMany({
             where: { campaignId: id },
@@ -67,9 +72,16 @@ export class CampaignsRepository {
      * @param id
      */
     async findSummaryById(id: number) {
-        return db.campaign.findUnique({
+        const campaign = await db.campaign.findUnique({
             where: { id },
         });
+
+        if (!campaign) {
+            throw new EntityNotFoundException(
+                `Campaign with id ${id} not found.`,
+            );
+        }
+        return campaign;
     }
 
     /**
@@ -78,6 +90,12 @@ export class CampaignsRepository {
      * @param campaign
      */
     async update(id: number, campaign: CampaignUpdateEntity) {
+        const findCampaign = await db.campaign.findUnique({ where: { id } });
+        if (!findCampaign) {
+            throw new EntityNotFoundException(
+                `Campaign with id ${id} not found.`,
+            );
+        }
         return db.campaign.update({
             where: { id },
             data: campaign,
@@ -89,6 +107,13 @@ export class CampaignsRepository {
      * @param id id of the campaign to delete
      */
     async delete(id: number) {
+        const findCampaign = await db.campaign.findUnique({ where: { id } });
+        if (!findCampaign) {
+            throw new EntityNotFoundException(
+                `Campaign with id ${id} not found.`,
+            );
+        }
+
         return db.campaign.delete({ where: { id } });
     }
 }

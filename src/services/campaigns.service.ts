@@ -8,7 +8,7 @@ export class CampaignsService {
         return this.campaignsRepository.create(campaign);
     }
 
-    async findAll(page = 0, count = 10) {
+    async findAll(page?: number, count?: number) {
         return this.campaignsRepository.findAll(page, count);
     }
 

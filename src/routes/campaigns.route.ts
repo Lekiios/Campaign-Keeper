@@ -125,6 +125,7 @@ server.delete(
     {
         schema: {
             params: deleteCampaignParamsSchema,
+            response: { 204: {}, 404: ErrorResponseSchema },
             tags: ["Campaigns"],
         },
     },
