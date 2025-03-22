@@ -12,6 +12,9 @@ import {
     deleteCampaignParamsSchema,
     findAllCampaignsResponseSchema,
     findAllCampaignsQuerySchema,
+    findCampaignByIdParamsSchema,
+    findCampaignSummaryByIdResponseSchema,
+    findCampaignCharactersResponseSchema,
 } from "@schemas/campaigns.schema";
 import { ErrorResponseSchema } from "@schemas/common.schema";
 
@@ -50,6 +53,46 @@ server.get(
     async (request, reply) => {
         const response = await campaignsController.findAllCampaigns(
             request.query,
+        );
+        return reply.status(response.statusCode).send(response.body);
+    },
+);
+
+server.get(
+    "/api/campaigns/:id",
+    {
+        schema: {
+            params: findCampaignByIdParamsSchema,
+            response: {
+                200: findCampaignSummaryByIdResponseSchema,
+                404: ErrorResponseSchema,
+            },
+            tags: ["Campaigns"],
+        },
+    },
+    async (request, reply) => {
+        const response = await campaignsController.findCampaignSummaryById(
+            request.params,
+        );
+        return reply.status(response.statusCode).send(response.body);
+    },
+);
+
+server.get(
+    "/api/campaigns/:id/characters",
+    {
+        schema: {
+            params: findCampaignByIdParamsSchema,
+            response: {
+                200: findCampaignCharactersResponseSchema,
+                404: ErrorResponseSchema,
+            },
+            tags: ["Campaigns"],
+        },
+    },
+    async (request, reply) => {
+        const response = await campaignsController.findCampaignCharactersById(
+            request.params,
         );
         return reply.status(response.statusCode).send(response.body);
     },

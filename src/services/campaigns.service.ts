@@ -12,8 +12,12 @@ export class CampaignsService {
         return this.campaignsRepository.findAll(page, count);
     }
 
-    async findById(id: number) {
-        return this.campaignsRepository.findById(id);
+    async findCampaignCharactersById(id: number) {
+        return this.campaignsRepository.findCharactersById(id);
+    }
+
+    async findCampaignSummaryById(id: number) {
+        return this.campaignsRepository.findSummaryById(id);
     }
 
     async update(id: number, campaign: CampaignUpdateEntity) {

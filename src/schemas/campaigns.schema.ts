@@ -1,6 +1,5 @@
 import { Static, Type as t } from "@sinclair/typebox";
 import { CampaignStatus } from "@prisma/client";
-import { charactersSchema } from "@schemas/characters.schema";
 
 export const campaignSchema = t.Object({
     id: t.Number(),
@@ -36,22 +35,38 @@ export type FindCampaignByIdParams = Static<
     typeof findCampaignByIdParamsSchema
 >;
 
-export const campaignWithDetailsSchema = t.Intersect([
-    campaignSchema,
-    t.Object({
-        characters: t.Array(charactersSchema),
-        sessions: t.Array(
-            t.Object({
-                id: t.Number(),
-                apiUrl: t.Optional(t.String()),
-            }),
-        ),
+export const simplifiedCharacterSchema = t.Object({
+    id: t.Number(),
+    name: t.String(),
+    level: t.Number(),
+    maxHp: t.Number(),
+    class: t.Object({
+        name: t.String(),
     }),
-]);
+    stats: t.Object({
+        strength: t.Number(),
+        dexterity: t.Number(),
+        constitution: t.Number(),
+        intelligence: t.Number(),
+        wisdom: t.Number(),
+        charisma: t.Number(),
+    }),
+});
 
-export const findCampaignByIdResponseSchema = campaignWithDetailsSchema;
-export type FindCampaignByIdResponse = Static<
-    typeof findCampaignByIdResponseSchema
+export const campaignWithSimplifiedCharactersSchema = t.Object({
+    name: t.String(),
+    characters: t.Array(simplifiedCharacterSchema),
+});
+
+export const findCampaignCharactersResponseSchema =
+    campaignWithSimplifiedCharactersSchema;
+export type FindCampaignCharactersResponse = Static<
+    typeof findCampaignCharactersResponseSchema
+>;
+
+export const findCampaignSummaryByIdResponseSchema = campaignSchema;
+export type FindCampaignSummaryByIdResponse = Static<
+    typeof findCampaignSummaryByIdResponseSchema
 >;
 
 export const findAllCampaignsQuerySchema = t.Object({

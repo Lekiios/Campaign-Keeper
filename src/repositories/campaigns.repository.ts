@@ -26,12 +26,9 @@ export class CampaignsRepository {
      * Find a specific campaign with its ID
      * @param id
      */
-    async findById(id: number) {
+    async findCharactersById(id: number) {
         const campaign = await db.campaign.findUnique({
             where: { id },
-            include: {
-                Session: true,
-            },
         });
 
         if (!campaign) return null;
@@ -60,8 +57,17 @@ export class CampaignsRepository {
             description: campaign.description,
             status: campaign.status,
             characters,
-            sessions: campaign.Session,
         };
+    }
+
+    /**
+     * Find a specific campaign with its ID
+     * @param id
+     */
+    async findSummaryById(id: number) {
+        return db.campaign.findUnique({
+            where: { id },
+        });
     }
 
     /**

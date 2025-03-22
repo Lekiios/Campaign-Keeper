@@ -9,6 +9,9 @@ import {
     UpdateCampaignParams,
     UpdateCampaignResponse,
     DeleteCampaignParams,
+    FindCampaignByIdParams,
+    FindCampaignCharactersResponse,
+    FindCampaignSummaryByIdResponse,
 } from "@schemas/campaigns.schema";
 import { ErrorResponse } from "@schemas/common.schema";
 
@@ -51,6 +54,71 @@ export class CampaignsController {
                 description: description ?? undefined,
                 status: status,
             })),
+        };
+    }
+
+    async findCampaignSummaryById(
+        params: FindCampaignByIdParams,
+    ): Promise<
+        ControllerResponse<FindCampaignSummaryByIdResponse | ErrorResponse>
+    > {
+        const { id } = params;
+        const campaign =
+            await this.campaignsService.findCampaignSummaryById(id);
+
+        if (!campaign) {
+            return {
+                statusCode: 404,
+                body: { message: `Campaign with id ${id} not found` },
+            };
+        }
+
+        return {
+            statusCode: 200,
+            body: {
+                id: campaign.id,
+                name: campaign.name,
+                description: campaign.description ?? undefined,
+                status: campaign.status as FindCampaignSummaryByIdResponse["status"],
+            },
+        };
+    }
+
+    async findCampaignCharactersById(
+        params: FindCampaignByIdParams,
+    ): Promise<
+        ControllerResponse<FindCampaignCharactersResponse | ErrorResponse>
+    > {
+        const campaign = await this.campaignsService.findCampaignCharactersById(
+            params.id,
+        );
+
+        if (!campaign) {
+            return {
+                statusCode: 404,
+                body: { message: `Campaign with id ${params.id} not found` },
+            };
+        }
+
+        const simplifiedCharacters = campaign.characters.map((character) => ({
+            id: character.id,
+            name: character.name,
+            level: character.level,
+            maxHp: character.maxHp,
+            class: {
+                name: character.class.name,
+            },
+            stats: character.stats,
+        }));
+
+        const response: FindCampaignCharactersResponse = {
+            name: campaign.name,
+            characters: simplifiedCharacters,
+        };
+
+        return {
+            statusCode: 200,
+            body: response,
         };
     }
 
