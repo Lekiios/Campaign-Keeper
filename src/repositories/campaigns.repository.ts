@@ -38,7 +38,9 @@ export class CampaignsRepository {
             select: { characterId: true },
         });
 
-        const characterIds = links.map((link) => link.characterId);
+        const characterIds = links.map(
+            (link: { characterId: number }) => link.characterId,
+        );
 
         const characters = await db.character.findMany({
             where: { id: { in: characterIds } },
