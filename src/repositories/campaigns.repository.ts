@@ -1,4 +1,4 @@
-import { db } from "../index";
+import { db } from "@providers/db";
 import { CampaignCreateEntity, CampaignUpdateEntity } from "@providers/db";
 
 export class CampaignsRepository {

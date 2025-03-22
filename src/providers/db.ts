@@ -15,6 +15,8 @@ export const createDbClient = () => {
     });
 };
 
+export const db = createDbClient();
+
 export type UserEntity = User;
 export type UserCreateEntity = Omit<User, "id">;
 export type UserUpdateEntity = Partial<User>;

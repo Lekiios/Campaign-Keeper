@@ -1,12 +1,12 @@
-import { configurePlugins, server } from "@providers/server";
+import { configureServer, server } from "@providers/server";
 import "dotenv/config";
-import { createDbClient } from "@providers/db";
+import "@providers/db";
 
 const { SERVER_PORT = 5000, SERVER_HOST = "0.0.0.0" } = process.env;
 
 const main = async () => {
     try {
-        await configurePlugins();
+        await configureServer();
 
         await Promise.all([
             await import("@routes/users.route"),
@@ -27,5 +27,4 @@ const main = async () => {
     }
 };
 
-export const db = createDbClient();
 main().catch(console.error);
