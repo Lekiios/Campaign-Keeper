@@ -14,6 +14,7 @@ import {
     FindCampaignSummaryByIdResponse,
 } from "@schemas/campaigns.schema";
 import { ErrorResponse } from "@schemas/common.schema";
+import { CampaignStatus } from "@prisma/client";
 
 export class CampaignsController {
     constructor(private readonly campaignsService: CampaignsService) {}
@@ -21,7 +22,15 @@ export class CampaignsController {
     async createCampaign(
         body: CreateCampaignBody,
     ): Promise<ControllerResponse<CreateCampaignResponse>> {
-        const { name, description, status } = body;
+        const {
+            name,
+            description,
+            status,
+        }: {
+            name: string;
+            description?: string;
+            status?: CampaignStatus;
+        } = body;
 
         const campaign = await this.campaignsService.create({
             name,
@@ -48,12 +57,19 @@ export class CampaignsController {
 
         return {
             statusCode: 200,
-            body: campaigns.map(({ id, name, description, status }) => ({
-                id,
-                name,
-                description: description ?? undefined,
-                status: status,
-            })),
+            body: campaigns.map(
+                (campaign: {
+                    id: number;
+                    name: string;
+                    description: string | null;
+                    status: string;
+                }) => ({
+                    id: campaign.id,
+                    name: campaign.name,
+                    description: campaign.description ?? undefined,
+                    status: campaign.status as FindCampaignSummaryByIdResponse["status"],
+                }),
+            ),
         };
     }
 
@@ -100,16 +116,32 @@ export class CampaignsController {
             };
         }
 
-        const simplifiedCharacters = campaign.characters.map((character) => ({
-            id: character.id,
-            name: character.name,
-            level: character.level,
-            maxHp: character.maxHp,
-            class: {
-                name: character.class.name,
-            },
-            stats: character.stats,
-        }));
+        const simplifiedCharacters = campaign.characters.map(
+            (character: {
+                id: number;
+                name: string;
+                level: number;
+                maxHp: number;
+                class: { name: string };
+                stats: {
+                    strength: number;
+                    dexterity: number;
+                    constitution: number;
+                    intelligence: number;
+                    wisdom: number;
+                    charisma: number;
+                };
+            }) => ({
+                id: character.id,
+                name: character.name,
+                level: character.level,
+                maxHp: character.maxHp,
+                class: {
+                    name: character.class.name,
+                },
+                stats: character.stats,
+            }),
+        );
 
         const response: FindCampaignCharactersResponse = {
             name: campaign.name,
@@ -127,7 +159,15 @@ export class CampaignsController {
         body: UpdateCampaignBody,
     ): Promise<ControllerResponse<UpdateCampaignResponse | ErrorResponse>> {
         const { id } = params;
-        const { name, description, status } = body;
+        const {
+            name,
+            description,
+            status,
+        }: {
+            name?: string;
+            description?: string;
+            status?: CampaignStatus;
+        } = body;
 
         const updatedCampaign = await this.campaignsService.update(id, {
             name,
