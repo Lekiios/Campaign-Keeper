@@ -12,6 +12,7 @@ import {
     FindCampaignByIdParams,
     FindCampaignCharactersResponse,
     FindCampaignSummaryByIdResponse,
+    CampaignCharacterParams,
 } from "@schemas/campaigns.schema";
 import { ErrorResponse } from "@schemas/common.schema";
 
@@ -136,6 +137,32 @@ export class CampaignsController {
         params: DeleteCampaignParams,
     ): Promise<ControllerResponse<undefined>> {
         await this.campaignsService.delete(params.id);
+        return {
+            statusCode: 204,
+            body: undefined,
+        };
+    }
+
+    async addCharacterToCampaign(
+        params: CampaignCharacterParams,
+    ): Promise<ControllerResponse<undefined | ErrorResponse>> {
+        await this.campaignsService.addCharacterToCampaign(
+            params.campaignId,
+            params.characterId,
+        );
+        return {
+            statusCode: 204,
+            body: undefined,
+        };
+    }
+
+    async deleteCharacterToCampaign(
+        params: CampaignCharacterParams,
+    ): Promise<ControllerResponse<undefined | ErrorResponse>> {
+        await this.campaignsService.deleteCharacterToCampaign(
+            params.campaignId,
+            params.characterId,
+        );
         return {
             statusCode: 204,
             body: undefined,

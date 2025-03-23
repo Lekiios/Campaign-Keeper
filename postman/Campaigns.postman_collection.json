@@ -348,6 +348,60 @@
 				}
 			},
 			"response": []
+		},
+		{
+			"name": "Add Character to Campaign",
+			"request": {
+				"method": "PUT",
+				"header": [],
+				"url": {
+					"raw": "http://127.0.0.1:5001/api/campaigns/1/character/2/add",
+					"protocol": "http",
+					"host": [
+						"127",
+						"0",
+						"0",
+						"1"
+					],
+					"port": "5001",
+					"path": [
+						"api",
+						"campaigns",
+						"1",
+						"character",
+						"2",
+						"add"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Remove Character to Campaign",
+			"request": {
+				"method": "PUT",
+				"header": [],
+				"url": {
+					"raw": "http://127.0.0.1:5001/api/campaigns/1/character/2/remove",
+					"protocol": "http",
+					"host": [
+						"127",
+						"0",
+						"0",
+						"1"
+					],
+					"port": "5001",
+					"path": [
+						"api",
+						"campaigns",
+						"1",
+						"character",
+						"2",
+						"remove"
+					]
+				}
+			},
+			"response": []
 		}
 	]
 }

@@ -27,4 +27,18 @@ export class CampaignsService {
     async delete(id: number) {
         return this.campaignsRepository.delete(id);
     }
+
+    async addCharacterToCampaign(campaignId: number, characterId: number) {
+        return this.campaignsRepository.addCharacterToCampaign(
+            campaignId,
+            characterId,
+        );
+    }
+
+    async deleteCharacterToCampaign(campaignId: number, characterId: number) {
+        return this.campaignsRepository.deleteCharacterToCampaign(
+            campaignId,
+            characterId,
+        );
+    }
 }

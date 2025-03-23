@@ -116,4 +116,68 @@ export class CampaignsRepository {
 
         return db.campaign.delete({ where: { id } });
     }
+
+    /**
+     * Add a character to a campaign
+     * @param characterId id of the character to add in the campaign
+     * @param campaignId id of the campaign
+     */
+    async addCharacterToCampaign(campaignId: number, characterId: number) {
+        const campaign = await db.campaign.findUnique({
+            where: { id: campaignId },
+        });
+        if (!campaign) {
+            throw new EntityNotFoundException(
+                `Campaign with id ${campaignId} not found.`,
+            );
+        }
+
+        const character = await db.character.findUnique({
+            where: { id: characterId },
+        });
+        if (!character) {
+            throw new EntityNotFoundException(
+                `Character with id ${characterId} not found.`,
+            );
+        }
+
+        await db.campaignCharacter.create({
+            data: {
+                campaignId,
+                characterId,
+            },
+        });
+    }
+
+    /**
+     * delete a character to a campaign
+     * @param characterId id of the character to delete in the campaign
+     * @param campaignId id of the campaign
+     */
+    async deleteCharacterToCampaign(campaignId: number, characterId: number) {
+        const campaign = await db.campaign.findUnique({
+            where: { id: campaignId },
+        });
+        if (!campaign) {
+            throw new EntityNotFoundException(
+                `Campaign with id ${campaignId} not found.`,
+            );
+        }
+
+        const character = await db.character.findUnique({
+            where: { id: characterId },
+        });
+        if (!character) {
+            throw new EntityNotFoundException(
+                `Character with id ${characterId} not found.`,
+            );
+        }
+
+        await db.campaignCharacter.deleteMany({
+            where: {
+                campaignId,
+                characterId,
+            },
+        });
+    }
 }
