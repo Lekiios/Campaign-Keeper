@@ -59,6 +59,9 @@ Once the containers are up and running, you can access the API at :
 
 `http://<SERVER_DOCKER_HOST>:<SERVER_LOCAL_PORT>.`
 
+You can also access the API documentation at :
+`http://<SERVER_DOCKER_HOST>:<SERVER_LOCAL_PORT>/swagger-ui`
+
 ## API Endpoints
     Work in progress
 
@@ -102,6 +105,26 @@ This project follows the Git Flow branching model to manage development and rele
 ## Contributing
 
 Feel free to open issues for any bugs or improvements.
+### Start the project in development mode
+
+#### Requirements
+- Node.js (v22+)
+- Docker
+- Docker Compose
+
+#### Install dependencies
+```bash
+corepack enable
+yarn install
+```
+
+#### Start the development server and database
+```bash
+docker compose up db -d --build
+yarn generate
+yarn db:migrate:dev
+yarn dev
+```
 
 ### Contributors
 - [Lekiios](https://github.com/Lekiios)
