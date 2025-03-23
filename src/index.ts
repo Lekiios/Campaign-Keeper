@@ -15,6 +15,7 @@ const main = async () => {
             await import("@routes/characters.route"),
             await import("@routes/items.route"),
             await import("@routes/campaigns.route"),
+            await import("@routes/sessions.route"),
         ]);
 
         await server.listen({

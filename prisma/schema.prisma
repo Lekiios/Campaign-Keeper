@@ -56,7 +56,7 @@ model Campaign {
 model Session {
   id         Int       @id @default(autoincrement())
   campaignId Int
-  apiUrl     String?
+  apiUrl     String
   campaign   Campaign? @relation(fields: [campaignId], references: [id])
 }
 
