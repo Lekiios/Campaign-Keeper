@@ -146,40 +146,26 @@ export class CampaignsController {
     async addCharacterToCampaign(
         params: CampaignCharacterParams,
     ): Promise<ControllerResponse<undefined | ErrorResponse>> {
-        try {
-            await this.campaignsService.addCharacterToCampaign(
-                params.campaignId,
-                params.characterId,
-            );
-            return {
-                statusCode: 204,
-                body: undefined,
-            };
-        } catch (error) {
-            return {
-                statusCode: 500,
-                body: { message: "Failed to add character to campaign" },
-            };
-        }
+        await this.campaignsService.addCharacterToCampaign(
+            params.campaignId,
+            params.characterId,
+        );
+        return {
+            statusCode: 204,
+            body: undefined,
+        };
     }
 
     async deleteCharacterToCampaign(
         params: CampaignCharacterParams,
     ): Promise<ControllerResponse<undefined | ErrorResponse>> {
-        try {
-            await this.campaignsService.deleteCharacterToCampaign(
-                params.campaignId,
-                params.characterId,
-            );
-            return {
-                statusCode: 204,
-                body: undefined,
-            };
-        } catch (error) {
-            return {
-                statusCode: 500,
-                body: { message: "Failed to remove character from campaign" },
-            };
-        }
+        await this.campaignsService.deleteCharacterToCampaign(
+            params.campaignId,
+            params.characterId,
+        );
+        return {
+            statusCode: 204,
+            body: undefined,
+        };
     }
 }

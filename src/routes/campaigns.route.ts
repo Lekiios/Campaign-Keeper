@@ -144,7 +144,7 @@ server.put(
         schema: {
             params: campaignCharacterParamsSchema,
             response: {
-                204: { type: "null" },
+                204: {},
                 500: ErrorResponseSchema,
             },
             tags: ["Campaigns"],
@@ -164,7 +164,7 @@ server.put(
         schema: {
             params: campaignCharacterParamsSchema,
             response: {
-                204: { type: "null" },
+                204: {},
                 500: ErrorResponseSchema,
             },
             tags: ["Campaigns"],

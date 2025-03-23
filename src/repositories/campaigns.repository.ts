@@ -123,6 +123,24 @@ export class CampaignsRepository {
      * @param campaignId id of the campaign
      */
     async addCharacterToCampaign(campaignId: number, characterId: number) {
+        const campaign = await db.campaign.findUnique({
+            where: { id: campaignId },
+        });
+        if (!campaign) {
+            throw new EntityNotFoundException(
+                `Campaign with id ${campaignId} not found.`,
+            );
+        }
+
+        const character = await db.character.findUnique({
+            where: { id: characterId },
+        });
+        if (!character) {
+            throw new EntityNotFoundException(
+                `Character with id ${characterId} not found.`,
+            );
+        }
+
         await db.campaignCharacter.create({
             data: {
                 campaignId,
@@ -137,6 +155,24 @@ export class CampaignsRepository {
      * @param campaignId id of the campaign
      */
     async deleteCharacterToCampaign(campaignId: number, characterId: number) {
+        const campaign = await db.campaign.findUnique({
+            where: { id: campaignId },
+        });
+        if (!campaign) {
+            throw new EntityNotFoundException(
+                `Campaign with id ${campaignId} not found.`,
+            );
+        }
+
+        const character = await db.character.findUnique({
+            where: { id: characterId },
+        });
+        if (!character) {
+            throw new EntityNotFoundException(
+                `Character with id ${characterId} not found.`,
+            );
+        }
+
         await db.campaignCharacter.deleteMany({
             where: {
                 campaignId,
