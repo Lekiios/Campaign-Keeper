@@ -7,6 +7,7 @@ import {
     Stats,
     Item,
     Campaign,
+    Session,
 } from "@prisma/client";
 
 export const createDbClient = () => {
@@ -48,3 +49,7 @@ export type CharacterUpdateEntity = Partial<CharacterPartialAllStatsEntity>;
 
 export type CampaignCreateEntity = Omit<Campaign, "id">;
 export type CampaignUpdateEntity = Partial<CampaignCreateEntity>;
+
+export type SessionEntity = Session;
+export type SessionCreateEntity = Omit<SessionEntity, "id">;
+export type SessionUpdateEntity = Partial<SessionCreateEntity>;

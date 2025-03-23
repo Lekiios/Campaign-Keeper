@@ -49,6 +49,10 @@ export const configureServer = async () => {
                     name: "Campaigns",
                     description: "Campaigns routes",
                 },
+                {
+                    name: "Sessions",
+                    description: "Sessions routes",
+                },
             ],
         },
     });
