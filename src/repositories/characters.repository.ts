@@ -1,18 +1,16 @@
-import {
-    db,
-    CharacterCreateEntity,
-    CharacterUpdateEntity,
-} from "@providers/db";
+import { CharacterCreateEntity, CharacterUpdateEntity } from "@providers/db";
 import { EntityNotFoundException } from "../exceptions/entity-not-found.exception";
 import { EntityInternalErrorException } from "../exceptions/entity-internal-error.exception";
+import { PrismaClient } from "@prisma/client";
 
 export class CharactersRepository {
+    constructor(private readonly db: PrismaClient) {}
     /**
      * Create a character in the database
      * @param character Object that contains the character data
      */
     async create(character: CharacterCreateEntity) {
-        const _class = await db.class.findUnique({
+        const _class = await this.db.class.findUnique({
             where: { id: character.classId },
         });
         if (!_class) {
@@ -20,7 +18,7 @@ export class CharactersRepository {
                 `Class with id ${character.classId} not found.`,
             );
         }
-        const user = await db.user.findUnique({
+        const user = await this.db.user.findUnique({
             where: { id: character.userId },
         });
         if (!user) {
@@ -29,10 +27,10 @@ export class CharactersRepository {
             );
         }
 
-        const stats = await db.stats.create({ data: character.stats });
+        const stats = await this.db.stats.create({ data: character.stats });
 
         // Set fields manually to undefined if it is not provided to handle default value
-        return db.character.create({
+        return this.db.character.create({
             data: {
                 ...character,
                 stats: undefined,
@@ -53,7 +51,7 @@ export class CharactersRepository {
         filter?: { classId?: number; userId?: number },
     ) {
         if (filter?.classId) {
-            const _class = await db.class.findUnique({
+            const _class = await this.db.class.findUnique({
                 where: { id: filter.classId },
             });
             if (!_class) {
@@ -63,7 +61,7 @@ export class CharactersRepository {
             }
         }
         if (filter?.userId) {
-            const user = await db.user.findUnique({
+            const user = await this.db.user.findUnique({
                 where: { id: filter.userId },
             });
             if (!user) {
@@ -73,7 +71,7 @@ export class CharactersRepository {
             }
         }
 
-        return db.character.findMany({
+        return this.db.character.findMany({
             skip: page * count,
             take: count,
             where: {
@@ -88,7 +86,7 @@ export class CharactersRepository {
      * @param id id of the character to read
      */
     async findById(id: number) {
-        const character = await db.character.findUnique({
+        const character = await this.db.character.findUnique({
             where: { id },
         });
         if (!character) {
@@ -104,13 +102,13 @@ export class CharactersRepository {
      * @param id id of the character to delete
      */
     async delete(id: number) {
-        const character = await db.character.findUnique({ where: { id } });
+        const character = await this.db.character.findUnique({ where: { id } });
         if (!character) {
             throw new EntityNotFoundException(
                 `Character with id ${id} not found.`,
             );
         }
-        return db.character.delete({
+        return this.db.character.delete({
             where: { id },
             include: { stats: true },
         });
@@ -123,7 +121,7 @@ export class CharactersRepository {
      */
     async update(id: number, character: CharacterUpdateEntity) {
         if (character.classId) {
-            const _class = await db.class.findUnique({
+            const _class = await this.db.class.findUnique({
                 where: { id: character.classId },
             });
             if (!_class) {
@@ -133,7 +131,7 @@ export class CharactersRepository {
             }
         }
         if (character.userId) {
-            const user = await db.user.findUnique({
+            const user = await this.db.user.findUnique({
                 where: { id: character.userId },
             });
             if (!user) {
@@ -146,13 +144,13 @@ export class CharactersRepository {
         if (character.stats) {
             const stats = await this.findCharacterStatsById(id);
 
-            await db.stats.update({
+            await this.db.stats.update({
                 where: { id: stats.id },
                 data: character.stats,
             });
         }
 
-        return db.character.update({
+        return this.db.character.update({
             where: { id },
             data: { ...character, stats: undefined },
         });
@@ -163,7 +161,7 @@ export class CharactersRepository {
      * @param id id of the character to get the stats from
      */
     async findCharacterStatsById(id: number) {
-        const character = await db.character.findUnique({
+        const character = await this.db.character.findUnique({
             where: { id },
             include: { stats: true },
         });
@@ -186,7 +184,7 @@ export class CharactersRepository {
      * @param id id of the character to get the class from
      */
     async findCharacterClassById(id: number) {
-        const character = await db.character.findUnique({
+        const character = await this.db.character.findUnique({
             where: { id },
             include: { class: true },
         });
@@ -208,7 +206,7 @@ export class CharactersRepository {
      * @param id id of the character to get the user from
      */
     async findCharacterUserById(id: number) {
-        const character = await db.character.findUnique({
+        const character = await this.db.character.findUnique({
             where: { id },
             include: { user: true },
         });
