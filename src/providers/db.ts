@@ -6,7 +6,8 @@ import {
     Character,
     Stats,
     Item,
-    Campaign, Session
+    Campaign,
+    Session,
 } from "@prisma/client";
 
 export const createDbClient = () => {
